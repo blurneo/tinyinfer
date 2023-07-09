@@ -9,4 +9,4 @@
 class AlexNet {
  public:
  private:
-}
+};
