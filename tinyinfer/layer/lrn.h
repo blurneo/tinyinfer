@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cmath>
-#include "tensor.h"
+#include "common/tensor.h"
 
 namespace ti {
 
