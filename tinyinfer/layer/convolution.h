@@ -26,6 +26,12 @@ class Convolution {
     bool Forward(const Tensor &input_tensor, Tensor &output_tensor) {
         // out x: (IN_W + PadL + PadR - K_W) / Stride_X + 1
         // out y: (IN_H + PadT + PadD - K_H) / Stride_Y + 1
+        Tensor padded_input_tensor = input_tensor;
+        if (param_.pad_t == 0 || param_.pad_d == 0 ||
+            param_.pad_l == 0 || param_.pad_r == 0) {
+            Tensor::pad(input_tensor, padded_input_tensor,
+                        param_.pad_t, param_.pad_d, param_.pad_l, param_.pad_r);
+        }
         int out_w = (input_tensor.get_w() + param_.pad_l +
                      param_.pad_r - param_.kernel_shape_x) / param_.stride_x + 1;
         int out_h = (input_tensor.get_h() + param_.pad_t +
