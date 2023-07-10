@@ -1,10 +1,12 @@
 #pragma once
 
-#include "common/tensor.h"
+#include "tinyinfer/common/tensor.h"
+#include "tinyinfer/common/check_macro.h"
+#include "tinyinfer/layer/base_layer.h"
 
 namespace ti {
 
-typedef struct MaxPoolLayerParam {
+typedef struct MaxPoolLayerParameter : public BaseLayerParameter {
     int kernel_shape_x;
     int kernel_shape_y;
     int stride_x;
@@ -13,12 +15,12 @@ typedef struct MaxPoolLayerParam {
     int pad_r;
     int pad_t;
     int pad_d;
-} MaxPoolLayerParam;
+} MaxPoolLayerParameter;
 
-class MaxPool {
+class MaxPool : public BaseLayer {
  public:
-    MaxPool(MaxPoolLayerParam &&param) : param_(std::move(param)) {}
-    bool Forward(const std::vector<Tensor> &input_tensors, Tensor &output_tensor) {
+    MaxPool(MaxPoolLayerParameter &&param) : param_(std::move(param)), BaseLayer(LAYER_MAXPOOL) {}
+    bool Forward(const std::vector<Tensor> &input_tensors, Tensor &output_tensor) override {
         CHECK_BOOL_RET(input_tensors.size(), 1, "Maxpool input tensor number should be 1")
         const Tensor &input_tensor = input_tensors[0];
         // out x: (IN_W + PadL + PadR - K_W) / Stride_X + 1
@@ -77,7 +79,7 @@ class MaxPool {
     }
 
  private:
-    MaxPoolLayerParam param_;
+    MaxPoolLayerParameter param_;
 };
 
 }

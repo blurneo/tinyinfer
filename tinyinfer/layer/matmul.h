@@ -1,22 +1,21 @@
 #pragma once
 
 #include <vector>
-#include "common/tensor.h"
-#include "common/check_macro.h"
+#include "tinyinfer/common/tensor.h"
+#include "tinyinfer/common/check_macro.h"
+#include "tinyinfer/layer/base_layer.h"
 
 namespace ti {
 
-typedef struct MatmulLayerParam {
+typedef struct MatmulLayerParam : public BaseLayerParameter {
 
 } MatmulLayerParam;
 
-class Matmul {
+class Matmul : public BaseLayer {
  public:
-    Matmul() {}
-
-    Matmul(MatmulLayerParam &&param) : param_(param) {}
+    Matmul(MatmulLayerParam &&param) : param_(param), BaseLayer(LAYER_MATMUL) {}
  private:
-    bool Forward(const std::vector<Tensor> &input_tensors, Tensor &output_tensor) {
+    bool Forward(const std::vector<Tensor> &input_tensors, Tensor &output_tensor) override {
         CHECK_BOOL_RET(input_tensors.size(), 2, "Matmul input tensor number should be 2")
         CHECK_BOOL_RET(input_tensors[0].can_multiply(input_tensors[1]), true, "Two input tensors can't multiply.");
         output_tensor.reshape(0, 0, input_tensors[0].get_h(), input_tensors[1].get_w());

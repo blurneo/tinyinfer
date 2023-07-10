@@ -3,7 +3,8 @@
 #include <vector>
 #include <optional>
 
-#include "common/tensor.h"
+#include "tinyinfer/common/tensor.h"
+#include "tinyinfer/layer/base_layer.h"
 #include "third_party/libnpy/include/npy.hpp"
 
 namespace ti {

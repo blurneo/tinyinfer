@@ -1,17 +1,18 @@
 #pragma once
-#include "common/tensor.h"
-#include "common/check_macro.h"
+#include "tinyinfer/common/tensor.h"
+#include "tinyinfer/common/check_macro.h"
+#include "tinyinfer/layer/base_layer.h"
 
 namespace ti {
 
-typedef struct AddnLayerParam {
+typedef struct AddnLayerParameter : public BaseLayerParameter {
     Tensor weights;
-} AddLayerParam;
+} AddLayerParameter;
 
-class Add {
+class Add : public BaseLayer {
  public:
-    Add() {}
-    bool Forward(const std::vector<Tensor> &input_tensors, Tensor &output_tensor) {
+    Add(AddLayerParameter &&param) : param_(std::move(param)), BaseLayer(LAYER_ADD) {}
+    bool Forward(const std::vector<Tensor> &input_tensors, Tensor &output_tensor) override {
         CHECK_BOOL_RET(input_tensors.size(), 1, "Add input tensor number should be 1")
         const Tensor &input_tensor = input_tensors[0];
         CHECK_BOOL_RET(input_tensor.is_alike(param_.weights), true,
@@ -37,7 +38,7 @@ class Add {
         return true;
     }
  private:
-    AddLayerParam param_;
+    AddLayerParameter param_;
 };
 
 }

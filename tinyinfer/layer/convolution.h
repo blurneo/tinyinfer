@@ -2,11 +2,13 @@
 
 #include <vector>
 #include <iostream>
-#include "common/tensor.h"
+#include "tinyinfer/common/tensor.h"
+#include "tinyinfer/common/check_macro.h"
+#include "tinyinfer/layer/base_layer.h"
 
 namespace ti {
 
-typedef struct ConvolutionLayerParam {
+typedef struct ConvolutionLayerParam : public BaseLayerParameter {
     int kernel_shape_x;
     int kernel_shape_y;
     int stride_x;
@@ -18,12 +20,12 @@ typedef struct ConvolutionLayerParam {
     int group = 1;
     Tensor weights;
     Tensor bias;
-} ConvolutionLayerParam;
+} ConvolutionLayerParameter;
 
-class Convolution {
+class Convolution : public BaseLayer {
  public:
-    Convolution(ConvolutionLayerParam &&param) : param_(std::move(param)) {}
-    bool Forward(const std::vector<Tensor> &input_tensors, Tensor &output_tensor) {
+    Convolution(ConvolutionLayerParameter &&param) : param_(std::move(param)), BaseLayer(LAYER_CONVOLUTION) {}
+    bool Forward(const std::vector<Tensor> &input_tensors, Tensor &output_tensor) override {
         CHECK_BOOL_RET(input_tensors.size(), 1, "Convolution input tensor number should be 1")
         const Tensor &input_tensor = input_tensors[0];
         // out x: (IN_W + PadL + PadR - K_W) / Stride_X + 1
@@ -98,7 +100,7 @@ class Convolution {
     }
 
  private:
-    ConvolutionLayerParam param_;
+    ConvolutionLayerParameter param_;
 };
 
 }

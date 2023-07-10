@@ -1,21 +1,23 @@
 #pragma once
 
 #include <cmath>
-#include "common/tensor.h"
+#include "tinyinfer/common/tensor.h"
+#include "tinyinfer/common/check_macro.h"
+#include "tinyinfer/layer/base_layer.h"
 
 namespace ti {
 
-typedef struct {
+typedef struct : public BaseLayerParameter {
     float alpha;
     float beta;
     float bias;
     int size;
 } LrnLayerParameter;
 
-class Lrn {
+class Lrn : public BaseLayer {
  public:
-    Lrn(LrnLayerParameter &&param) : param_(std::move(param)) {}
-    bool Forward(const std::vector<Tensor> &input_tensors, Tensor &output_tensor) {
+    Lrn(LrnLayerParameter &&param) : param_(std::move(param)), BaseLayer(LAYER_LRN) {}
+    bool Forward(const std::vector<Tensor> &input_tensors, Tensor &output_tensor) override {
         CHECK_BOOL_RET(input_tensors.size(), 1, "Lrn input tensor number should be 1")
         const Tensor &input_tensor = input_tensors[0];
         output_tensor.set_n(input_tensor.get_n());

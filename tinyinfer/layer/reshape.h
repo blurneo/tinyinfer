@@ -1,19 +1,20 @@
 #pragma once
 
 #include <vector>
-#include "common/tensor.h"
-#include "common/check_macro.h"
+#include "tinyinfer/common/tensor.h"
+#include "tinyinfer/common/check_macro.h"
+#include "tinyinfer/layer/base_layer.h"
 
 namespace ti {
 
-typedef struct ReshapeLayerParam {
+typedef struct ReshapeLayerParameter : public BaseLayerParameter {
     std::vector<int> shapes;
-} ReshapeLayerParam;
+} ReshapeLayerParameter;
 
-class Reshape {
+class Reshape : public BaseLayer {
  public:
-    Reshape(ReshapeLayerParam &&param) : param_(param) {}
-    bool Forward(const std::vector<Tensor> &input_tensors, Tensor &output_tensor) {
+    Reshape(ReshapeLayerParameter &&param) : param_(param), BaseLayer(LAYER_RESHAPE) {}
+    bool Forward(const std::vector<Tensor> &input_tensors, Tensor &output_tensor) override {
         CHECK_BOOL_RET(input_tensors.size(), 1, "Maxpool input tensor number should be 1")
         const Tensor &input_tensor = input_tensors[0];
         CHECK_BOOL_RET(param_.shapes.size() > 0, true, "Reshape layer shape param is empty");
@@ -46,7 +47,7 @@ class Reshape {
         }
         return true;
     }
-    ReshapeLayerParam param_;
+    ReshapeLayerParameter param_;
 };
 
 }

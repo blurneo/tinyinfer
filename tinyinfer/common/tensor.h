@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 #include "common/check_macro.h"
 
 namespace ti {
@@ -16,6 +17,8 @@ class Tensor {
         n_(n), c_(c), h_(h), w_(w), values_(std::move(values)) {
             dims_from_shapes(n, c, h, w);
         }
+    void set_name(std::string name) { name_ = name; }
+    std::string get_name() const { return name_; }
     int get_count() const { return values_.size(); }
     int get_n() const { return n_; }
     int get_c() const { return c_; }
@@ -132,6 +135,7 @@ class Tensor {
     std::vector<float> values_;
     int n_, c_, h_, w_;
     int dims_;
+    std::string name_;
 };
 
 }
