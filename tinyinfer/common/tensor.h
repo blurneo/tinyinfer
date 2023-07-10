@@ -6,7 +6,7 @@ namespace ti {
 
 class Tensor {
  public:
-    Tensor() {}
+    Tensor() : n_(0), c_(0), h_(0), w_(0) {}
     Tensor(int n, int c, int h, int w) :
         n_(n), c_(c), h_(h), w_(w), values_(std::vector<float>(n*c*h*w)) {}
     Tensor(int n, int c, int h, int w, std::vector<float> &&values) :
@@ -52,6 +52,22 @@ class Tensor {
                 std::memcpy(dst, src, in_w * sizeof(float));
             }
         }
+    }
+
+    bool is_alike(const Tensor &in) const {
+        return (in.get_n() == get_n() &&
+                in.get_c() == get_c() &&
+                in.get_h() == get_h() &&
+                in.get_w() == get_w() &&
+                in.get_values().size() == get_values().size());
+    }
+
+    void reshape_like(const Tensor &in) {
+        reshape(in.get_n(), in.get_c(), in.get_h(), in.get_w());
+    }
+
+    bool is_matrix() {
+        return (n_ == 0 && c_ == 0 && h_ != 0 && w_ != 0);
     }
 
  private:

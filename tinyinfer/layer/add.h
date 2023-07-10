@@ -1,17 +1,20 @@
 #pragma once
 #include "common/tensor.h"
+#include "common/check_macro.h"
 
 namespace ti {
 
-class Relu {
+typedef struct AddnLayerParam {
+    Tensor weights;
+} AddLayerParam;
+
+class Add {
  public:
-    Relu() {}
+    Add() {}
     bool Forward(const Tensor &input_tensor, Tensor &output_tensor) {
-        output_tensor.set_n(input_tensor.get_n());
-        output_tensor.set_c(input_tensor.get_c());
-        output_tensor.set_h(input_tensor.get_h());
-        output_tensor.set_w(input_tensor.get_w());
-        output_tensor.get_values().resize(input_tensor.get_count());
+        CHECK_RET(input_tensor.is_alike(param_.weights), true,
+            "Add input tensor not alike with weights");
+        output_tensor.reshape_like(input_tensor);
         return kernel(input_tensor, output_tensor);
     }
  private:
@@ -27,11 +30,12 @@ class Relu {
         int OUT_T_W = output_tensor.get_w();
         std::vector<float> &output_vals = output_tensor.get_values();
         for (int idx = 0; idx < input_vals.size(); idx++) {
-            float in = input_vals[idx];
-            output_vals[idx] = in > 0 ? in : 0;
+            output_vals[idx] = input_vals[idx] + param_.weights.get_values()[idx];
         }
         return true;
     }
+ private:
+    AddLayerParam param_;
 };
 
 }
