@@ -16,10 +16,11 @@ class Matmul {
 
     Matmul(MatmulLayerParam &&param) : param_(param) {}
  private:
-    bool Forward(const std::vector<Tensor> &input_tensor, Tensor &output_tensor) {
-        CHECK_BOOL_RET(input_tensor[0].can_multiply(input_tensor[1]), true, "Two input tensors can't multiply.");
-        output_tensor.reshape(0, 0, input_tensor[0].get_h(), input_tensor[1].get_w());
-        return kernel(input_tensor[0], input_tensor[1], output_tensor);
+    bool Forward(const std::vector<Tensor> &input_tensors, Tensor &output_tensor) {
+        CHECK_BOOL_RET(input_tensors.size(), 2, "Matmul input tensor number should be 2")
+        CHECK_BOOL_RET(input_tensors[0].can_multiply(input_tensors[1]), true, "Two input tensors can't multiply.");
+        output_tensor.reshape(0, 0, input_tensors[0].get_h(), input_tensors[1].get_w());
+        return kernel(input_tensors[0], input_tensors[1], output_tensor);
     }
     bool kernel(const Tensor &input_tensor1, const Tensor &input_tensor2, Tensor &output_tensor) {
         int H1 = input_tensor1.get_h();

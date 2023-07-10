@@ -23,7 +23,9 @@ typedef struct ConvolutionLayerParam {
 class Convolution {
  public:
     Convolution(ConvolutionLayerParam &&param) : param_(std::move(param)) {}
-    bool Forward(const Tensor &input_tensor, Tensor &output_tensor) {
+    bool Forward(const std::vector<Tensor> &input_tensors, Tensor &output_tensor) {
+        CHECK_BOOL_RET(input_tensors.size(), 1, "Convolution input tensor number should be 1")
+        const Tensor &input_tensor = input_tensors[0];
         // out x: (IN_W + PadL + PadR - K_W) / Stride_X + 1
         // out y: (IN_H + PadT + PadD - K_H) / Stride_Y + 1
         Tensor padded_input_tensor = input_tensor;

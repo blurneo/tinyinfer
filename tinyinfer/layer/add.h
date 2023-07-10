@@ -11,7 +11,9 @@ typedef struct AddnLayerParam {
 class Add {
  public:
     Add() {}
-    bool Forward(const Tensor &input_tensor, Tensor &output_tensor) {
+    bool Forward(const std::vector<Tensor> &input_tensors, Tensor &output_tensor) {
+        CHECK_BOOL_RET(input_tensors.size(), 1, "Add input tensor number should be 1")
+        const Tensor &input_tensor = input_tensors[0];
         CHECK_BOOL_RET(input_tensor.is_alike(param_.weights), true,
             "Add input tensor not alike with weights");
         output_tensor.reshape_like(input_tensor);

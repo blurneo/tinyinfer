@@ -18,7 +18,9 @@ typedef struct MaxPoolLayerParam {
 class MaxPool {
  public:
     MaxPool(MaxPoolLayerParam &&param) : param_(std::move(param)) {}
-    bool Forward(const Tensor &input_tensor, Tensor &output_tensor) {
+    bool Forward(const std::vector<Tensor> &input_tensors, Tensor &output_tensor) {
+        CHECK_BOOL_RET(input_tensors.size(), 1, "Maxpool input tensor number should be 1")
+        const Tensor &input_tensor = input_tensors[0];
         // out x: (IN_W + PadL + PadR - K_W) / Stride_X + 1
         // out y: (IN_H + PadT + PadD - K_H) / Stride_Y + 1
         int out_w = (input_tensor.get_w() + param_.pad_l +

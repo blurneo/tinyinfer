@@ -1,5 +1,4 @@
-#pragma once
-
+#include <iostream>
 #include "tinyinfer/common/tensor.h"
 #include "tinyinfer/layer/convolution.h"
 #include "tinyinfer/layer/max_pool.h"
@@ -10,3 +9,7 @@ class AlexNet {
  public:
  private:
 };
+
+int main() {
+    return 0;
+}

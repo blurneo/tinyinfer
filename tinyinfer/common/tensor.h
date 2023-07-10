@@ -98,7 +98,7 @@ class Tensor {
         return get_h() == in.get_w() && get_w() == in.get_h();
     }
  private:
-    int dims_from_shapes(int n, int c, int h, int w) {
+    void dims_from_shapes(int n, int c, int h, int w) {
         bool dims_start = false;
         int dims = 0;
         if (n > 0) {

@@ -13,3 +13,9 @@
         return false; \
     }
 
+#define CHECK_INT_RET(x, expected, ret, str) \
+    if ((x) != expected) { \
+        std::cerr << "CHECK Int Ret Failed: " << str << "\n"; \
+        return ret; \
+    }
+

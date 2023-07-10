@@ -15,7 +15,9 @@ typedef struct {
 class Lrn {
  public:
     Lrn(LrnLayerParameter &&param) : param_(std::move(param)) {}
-    bool Forward(const Tensor &input_tensor, Tensor &output_tensor) {
+    bool Forward(const std::vector<Tensor> &input_tensors, Tensor &output_tensor) {
+        CHECK_BOOL_RET(input_tensors.size(), 1, "Lrn input tensor number should be 1")
+        const Tensor &input_tensor = input_tensors[0];
         output_tensor.set_n(input_tensor.get_n());
         output_tensor.set_c(input_tensor.get_c());
         output_tensor.set_h(input_tensor.get_h());

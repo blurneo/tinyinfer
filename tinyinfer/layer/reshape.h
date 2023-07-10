@@ -13,7 +13,9 @@ typedef struct ReshapeLayerParam {
 class Reshape {
  public:
     Reshape(ReshapeLayerParam &&param) : param_(param) {}
-    bool Forward(const Tensor &input_tensor, Tensor &output_tensor) {
+    bool Forward(const std::vector<Tensor> &input_tensors, Tensor &output_tensor) {
+        CHECK_BOOL_RET(input_tensors.size(), 1, "Maxpool input tensor number should be 1")
+        const Tensor &input_tensor = input_tensors[0];
         CHECK_BOOL_RET(param_.shapes.size() > 0, true, "Reshape layer shape param is empty");
         CHECK_BOOL_RET(param_.shapes.size() <= 4, true, "Reshape layer shape param is too large");
         int count = 1;
