@@ -12,7 +12,7 @@ class Add {
  public:
     Add() {}
     bool Forward(const Tensor &input_tensor, Tensor &output_tensor) {
-        CHECK_RET(input_tensor.is_alike(param_.weights), true,
+        CHECK_BOOL_RET(input_tensor.is_alike(param_.weights), true,
             "Add input tensor not alike with weights");
         output_tensor.reshape_like(input_tensor);
         return kernel(input_tensor, output_tensor);

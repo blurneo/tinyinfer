@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "common/check_macro.h"
 
 namespace ti {
 
@@ -8,10 +9,14 @@ class Tensor {
  public:
     Tensor() : n_(0), c_(0), h_(0), w_(0) {}
     Tensor(int n, int c, int h, int w) :
-        n_(n), c_(c), h_(h), w_(w), values_(std::vector<float>(n*c*h*w)) {}
+        n_(n), c_(c), h_(h), w_(w), values_(std::vector<float>(n*c*h*w)) {
+            dims_from_shapes(n, c, h, w);
+        }
     Tensor(int n, int c, int h, int w, std::vector<float> &&values) :
-        n_(n), c_(c), h_(h), w_(w), values_(std::move(values)) {}
-    int get_count() const { return n_ * c_ * h_ * w_; }
+        n_(n), c_(c), h_(h), w_(w), values_(std::move(values)) {
+            dims_from_shapes(n, c, h, w);
+        }
+    int get_count() const { return values_.size(); }
     int get_n() const { return n_; }
     int get_c() const { return c_; }
     int get_h() const { return h_; }
@@ -27,11 +32,28 @@ class Tensor {
         set_c(c);
         set_h(h);
         set_w(w);
-        values_.resize(n * c * h * w, 0);
+        int cnt = 0;
+        if (n > 0) {
+            cnt = cnt == 0 ? n : cnt * n;
+        }
+        if (c > 0) {
+            cnt = cnt == 0 ? c : cnt * c;
+        }
+        if (h > 0) {
+            cnt = cnt == 0 ? h : cnt * h;
+        }
+        if (w > 0) {
+            cnt = cnt == 0 ? w : cnt * w;
+        }
+        values_.resize(cnt, 0);
+        dims_from_shapes(n, c, h, w);
     }
     float* ptr() { return values_.data(); }
     const float* ptr() const { return values_.data(); }
+    int dims() { return dims_; }
+    int dims() const { return dims_; }
 
+    // TODO: handle when tensor dimension is not 4
     static void pad(const Tensor &in, Tensor &out,
                     int pad_t, int pad_d, int pad_l, int pad_r) {
         int in_n = in.get_n();
@@ -67,12 +89,49 @@ class Tensor {
     }
 
     bool is_matrix() {
-        return (n_ == 0 && c_ == 0 && h_ != 0 && w_ != 0);
+        return dims_ == 2;
+    }
+    bool can_multiply(const Tensor &in) const {
+        if (dims() != 2 || in.dims() != 2) {
+            return false;
+        }
+        return get_h() == in.get_w() && get_w() == in.get_h();
+    }
+ private:
+    int dims_from_shapes(int n, int c, int h, int w) {
+        bool dims_start = false;
+        int dims = 0;
+        if (n > 0) {
+            dims_start = true;
+            dims++;
+        } else {
+            CHECK(dims_start, false, "Tensor shapes illegal");
+        }
+        if (c > 0) {
+            dims_start = true;
+            dims++;
+        } else {
+            CHECK(dims_start, false, "Tensor shapes illegal");
+        }
+        if (h > 0) {
+            dims_start = true;
+            dims++;
+        } else {
+            CHECK(dims_start, false, "Tensor shapes illegal");
+        }
+        if (w > 0) {
+            dims_start = true;
+            dims++;
+        } else {
+            CHECK(dims_start, false, "Tensor shapes illegal");
+        }
+        dims_ = dims;
     }
 
  private:
     std::vector<float> values_;
     int n_, c_, h_, w_;
+    int dims_;
 };
 
 }
