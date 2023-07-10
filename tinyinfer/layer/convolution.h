@@ -15,7 +15,7 @@ typedef struct ConvolutionLayerParam {
     int pad_r;
     int pad_t;
     int pad_d;
-    int group = -1;
+    int group = 1;
     Tensor weights;
     Tensor bias;
 } ConvolutionLayerParam;
