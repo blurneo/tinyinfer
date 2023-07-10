@@ -25,44 +25,46 @@ typedef struct ConvolutionLayerParam : public BaseLayerParameter {
 class Convolution : public BaseLayer {
  public:
     Convolution(ConvolutionLayerParameter &&param) : param_(std::move(param)), BaseLayer(LAYER_CONVOLUTION) {}
-    bool Forward(const std::vector<Tensor> &input_tensors, Tensor &output_tensor) override {
+    bool Forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
+                 std::vector<std::shared_ptr<Tensor>> output_tensors) override {
         CHECK_BOOL_RET(input_tensors.size(), 1, "Convolution input tensor number should be 1")
-        const Tensor &input_tensor = input_tensors[0];
+        const std::shared_ptr<Tensor> &input_tensor = input_tensors[0];
+        std::shared_ptr<Tensor> output_tensor = output_tensors[0];
         // out x: (IN_W + PadL + PadR - K_W) / Stride_X + 1
         // out y: (IN_H + PadT + PadD - K_H) / Stride_Y + 1
-        Tensor padded_input_tensor = input_tensor;
+        std::shared_ptr<Tensor> padded_input_tensor = input_tensor;
         if (param_.pad_t == 0 || param_.pad_d == 0 ||
             param_.pad_l == 0 || param_.pad_r == 0) {
             Tensor::pad(input_tensor, padded_input_tensor,
                         param_.pad_t, param_.pad_d, param_.pad_l, param_.pad_r);
         }
-        int out_w = (input_tensor.get_w() + param_.pad_l +
+        int out_w = (input_tensor->get_w() + param_.pad_l +
                      param_.pad_r - param_.kernel_shape_x) / param_.stride_x + 1;
-        int out_h = (input_tensor.get_h() + param_.pad_t +
+        int out_h = (input_tensor->get_h() + param_.pad_t +
                      param_.pad_d - param_.kernel_shape_y) / param_.stride_y + 1;
-        output_tensor.set_n(1);
-        output_tensor.set_c(input_tensor.get_n());
-        output_tensor.set_h(out_h);
-        output_tensor.set_w(out_w);
-        output_tensor.get_values().resize(input_tensor.get_n() * out_h * out_w);
+        output_tensor->set_n(1);
+        output_tensor->set_c(input_tensor->get_n());
+        output_tensor->set_h(out_h);
+        output_tensor->set_w(out_w);
+        output_tensor->get_values().resize(input_tensor->get_n() * out_h * out_w);
 
         return kernel(input_tensor, output_tensor);
         // return true;
     }
 
  private:
-    bool kernel(const Tensor &input_tensor, Tensor &output_tensor) {
+    bool kernel(const std::shared_ptr<Tensor> &input_tensor, std::shared_ptr<Tensor> output_tensor) {
         // param def
-        int IN_T_N = input_tensor.get_n();
-        int IN_T_C = input_tensor.get_c();
-        int IN_T_H = input_tensor.get_h();
-        int IN_T_W = input_tensor.get_w();
-        const std::vector<float> &input_vals = input_tensor.get_values();
-        int OUT_T_N = output_tensor.get_n();
-        int OUT_T_C = output_tensor.get_c();
-        int OUT_T_H = output_tensor.get_h();
-        int OUT_T_W = output_tensor.get_w();
-        std::vector<float> &output_vals = output_tensor.get_values();
+        int IN_T_N = input_tensor->get_n();
+        int IN_T_C = input_tensor->get_c();
+        int IN_T_H = input_tensor->get_h();
+        int IN_T_W = input_tensor->get_w();
+        const std::vector<float> &input_vals = input_tensor->get_values();
+        int OUT_T_N = output_tensor->get_n();
+        int OUT_T_C = output_tensor->get_c();
+        int OUT_T_H = output_tensor->get_h();
+        int OUT_T_W = output_tensor->get_w();
+        std::vector<float> &output_vals = output_tensor->get_values();
         int kshape_x = param_.kernel_shape_x, kshape_y = param_.kernel_shape_y;
         int stride_x = param_.stride_x, stride_y = param_.stride_x;
         int pad_l = param_.pad_l, pad_r = param_.pad_r, pad_t = param_.pad_t, pad_d = param_.pad_d;

@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 #include "common/check_macro.h"
 
 namespace ti {
@@ -57,48 +58,48 @@ class Tensor {
     int dims() const { return dims_; }
 
     // TODO: handle when tensor dimension is not 4
-    static void pad(const Tensor &in, Tensor &out,
+    static void pad(const std::shared_ptr<Tensor> &in, std::shared_ptr<Tensor> &out,
                     int pad_t, int pad_d, int pad_l, int pad_r) {
-        int in_n = in.get_n();
-        int in_c = in.get_c();
-        int in_h = in.get_h();
-        int in_w = in.get_w();
-        int out_n = in.get_n();
-        int out_c = in.get_c();
-        int out_h = in.get_h() + pad_t + pad_d;
-        int out_w = in.get_w() + pad_l + pad_r;
+        int in_n = in->get_n();
+        int in_c = in->get_c();
+        int in_h = in->get_h();
+        int in_w = in->get_w();
+        int out_n = out->get_n();
+        int out_c = out->get_c();
+        int out_h = out->get_h() + pad_t + pad_d;
+        int out_w = out->get_w() + pad_l + pad_r;
         out.reshape(out_n, out_c, out_h, out_w);
         int start_h = pad_t;
         int start_w = pad_l;
         for (int c = 0; c < in_c; c++) {
             for (int ih = 0, oh = start_h; ih < in_h; oh++, ih++) {
-                const float *src = in.ptr() + c * in_h * in_w + ih * in_w;
-                float *dst = out.ptr() + c * out_h * out_w + oh * out_w + start_w;
+                const float *src = in->ptr() + c * in_h * in_w + ih * in_w;
+                float *dst = out->ptr() + c * out_h * out_w + oh * out_w + start_w;
                 std::memcpy(dst, src, in_w * sizeof(float));
             }
         }
     }
 
-    bool is_alike(const Tensor &in) const {
-        return (in.get_n() == get_n() &&
-                in.get_c() == get_c() &&
-                in.get_h() == get_h() &&
-                in.get_w() == get_w() &&
-                in.get_values().size() == get_values().size());
+    bool is_alike(const std::shared_ptr<Tensor> &in) const {
+        return (in->get_n() == get_n() &&
+                in->get_c() == get_c() &&
+                in->get_h() == get_h() &&
+                in->get_w() == get_w() &&
+                in->get_values().size() == get_values().size());
     }
 
-    void reshape_like(const Tensor &in) {
-        reshape(in.get_n(), in.get_c(), in.get_h(), in.get_w());
+    void reshape_like(const std::shared_ptr<Tensor> &in) {
+        reshape(in->get_n(), in->get_c(), in->get_h(), in->get_w());
     }
 
     bool is_matrix() {
         return dims_ == 2;
     }
-    bool can_multiply(const Tensor &in) const {
-        if (dims() != 2 || in.dims() != 2) {
+    bool can_multiply(const std::shared_ptr<Tensor> &in) const {
+        if (dims() != 2 || in->dims() != 2) {
             return false;
         }
-        return get_h() == in.get_w() && get_w() == in.get_h();
+        return get_h() == in->get_w() && get_w() == in->get_h();
     }
  private:
     void dims_from_shapes(int n, int c, int h, int w) {

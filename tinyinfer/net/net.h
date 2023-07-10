@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include "tinyinfer/common/tensor.h"
 #include "tinyinfer/layer/base_layer.h"
 
@@ -9,6 +10,11 @@ namespace ti {
 class Net;
 class Graph {
  public:
+    struct {
+        std::vector<std::string> prev;
+        std::string name;
+        std::vector<std::string> next;
+    } Node;
     Graph() {}
     static Graph FromNet(Net& net) {
         return Graph();
@@ -21,7 +27,7 @@ class Graph {
 
 class Net {
  public:
-    bool register_layer(std::string name, const BaseLayer &layer) {
+    bool register_layer(std::string name, std::shared_ptr<BaseLayer> layer) {
         layers_[name] = layer;
         return true;
     }
@@ -33,13 +39,13 @@ class Net {
         while (graph_.is_finished()) {
             std::string layer_name = graph_.next();
             auto& layer = layers_[layer_name];
-            const std::vector<std::string> &input_names = layer.get_input_names();
-            std::vector<Tensor> input_tensors;
+            const std::vector<std::string> &input_names = layer->get_input_names();
+            std::vector<std::shared_ptr<Tensor>> input_tensors;
             for (const auto& name : input_names) {
                 input_tensors.push_back(tensors_[name]);
             }
-            const std::vector<std::string> &output_names = layer.get_output_names();
-            std::vector<Tensor> output_tensors;
+            const std::vector<std::string> &output_names = layer->get_output_names();
+            std::vector<std::shared_ptr<Tensor>> output_tensors;
             for (const auto& name : output_names) {
                 output_tensors.push_back(tensors_[name]);
             }
@@ -50,8 +56,8 @@ class Net {
     }
     friend Graph;
  private:
-    std::map<std::string, BaseLayer> layers_;
-    std::map<std::string, Tensor> tensors_;
+    std::map<std::string, std::shared_ptr<BaseLayer>> layers_;
+    std::map<std::string, std::shared_ptr<Tensor>> tensors_;
     Graph graph_;
 };
 
