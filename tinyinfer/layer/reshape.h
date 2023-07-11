@@ -9,7 +9,7 @@ namespace ti {
 
 typedef struct ReshapeLayerParameter : public BaseLayerParameter {
     std::shared_ptr<Tensor> data;
-    std::shared_ptr<Tensor> shape;
+    std::vector<unsigned long> shape;
 } ReshapeLayerParameter;
 
 class Reshape : public BaseLayer {
@@ -25,27 +25,30 @@ class Reshape : public BaseLayer {
             input_tensor = input_tensors[0];
         }
         std::shared_ptr<Tensor> output_tensor = output_tensors[0];
-        CHECK_BOOL_RET(param_.shape->dims() > 0, true, "Reshape layer shape param is empty");
-        CHECK_BOOL_RET(param_.shape->dims() <= 4, true, "Reshape layer shape param is too large");
-        int count = param_.shape->get_count();
+        CHECK_BOOL_RET(param_.shape.size() > 0, true, "Reshape layer shape param is empty");
+        CHECK_BOOL_RET(param_.shape.size() <= 4, true, "Reshape layer shape param is too large");
+        int count = 1;
+        for (auto val : param_.shape) {
+            count *= val;
+        }
         CHECK_BOOL_RET(count == input_tensor->get_count(), true, "Reshape layer input count not same with param");
         return kernel(input_tensor, output_tensor);
     }
  private:
     bool kernel(std::shared_ptr<Tensor> input_tensor, std::shared_ptr<Tensor> output_tensor) {
-        int shape_size = param_.shape->dims();
+        int shape_size = param_.shape.size();
         switch (shape_size) {
             case 1:
-                output_tensor->reshape(0, 0, 0, param_.shape->get_w());
+                output_tensor->reshape(0, 0, 0, param_.shape[0]);
                 break;
             case 2:
-                output_tensor->reshape(0, 0, param_.shape->get_h(), param_.shape->get_w());
+                output_tensor->reshape(0, 0, param_.shape[0], param_.shape[1]);
                 break;
             case 3:
-                output_tensor->reshape(0, param_.shape->get_c(), param_.shape->get_h(), param_.shape->get_w());
+                output_tensor->reshape(0, param_.shape[0], param_.shape[1], param_.shape[2]);
                 break;
             case 4:
-                output_tensor->reshape(param_.shape->get_n(), param_.shape->get_c(), param_.shape->get_h(), param_.shape->get_w());
+                output_tensor->reshape(param_.shape[0], param_.shape[1], param_.shape[2], param_.shape[3]);
                 break;
             default:
                 break;

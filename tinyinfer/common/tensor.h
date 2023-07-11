@@ -109,25 +109,25 @@ class Tensor {
             dims_start = true;
             dims++;
         } else {
-            CHECK(dims_start, false, "Tensor shapes illegal");
+            CHECK(dims_start, false, "Tensor shapes illegal:" << n << ", " << c << ", " << h << ", " << w << "\n");
         }
         if (c > 0) {
             dims_start = true;
             dims++;
         } else {
-            CHECK(dims_start, false, "Tensor shapes illegal");
+            CHECK(dims_start, false, "Tensor shapes illegal:" << n << ", " << c << ", " << h << ", " << w << "\n");
         }
         if (h > 0) {
             dims_start = true;
             dims++;
         } else {
-            CHECK(dims_start, false, "Tensor shapes illegal");
+            CHECK(dims_start, false, "Tensor shapes illegal:" << n << ", " << c << ", " << h << ", " << w << "\n");
         }
         if (w > 0) {
             dims_start = true;
             dims++;
         } else {
-            CHECK(dims_start, false, "Tensor shapes illegal");
+            CHECK(dims_start, false, "Tensor shapes illegal:" << n << ", " << c << ", " << h << ", " << w << "\n");
         }
         dims_ = dims;
     }

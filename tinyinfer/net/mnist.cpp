@@ -13,36 +13,39 @@
 
 bool init_conv_weight(std::string layer_name, std::string weight_file, std::string bias_file,
                ti::ConvolutionLayerParameter &param) {
-    std::shared_ptr<ti::Tensor> weight = ti::NumpyTensor::FromFile(weight_file);
+    std::shared_ptr<ti::Tensor> weight = ti::NumpyTensor<float>::FromFile(weight_file);
     param.weights = weight;
     if (!bias_file.empty()) {
-        std::shared_ptr<ti::Tensor> bias = ti::NumpyTensor::FromFile(bias_file);
+        std::shared_ptr<ti::Tensor> bias = ti::NumpyTensor<float>::FromFile(bias_file);
         param.bias = bias;
     }
     return true;
 }
 
 bool init_add_weight(std::string layer_name, std::string weight_file, ti::AddLayerParameter &param) {
-    std::shared_ptr<ti::Tensor> weight = ti::NumpyTensor::FromFile(weight_file);
+    std::shared_ptr<ti::Tensor> weight = ti::NumpyTensor<float>::FromFile(weight_file);
     param.weights = weight;
     return true;
 }
 
 bool init_reshape_weight(std::string layer_name, std::string data_file, std::string shape_file, ti::ReshapeLayerParameter &param) {
     if (!data_file.empty()) {
-        std::shared_ptr<ti::Tensor> data = ti::NumpyTensor::FromFile(data_file);
+        std::shared_ptr<ti::Tensor> data = ti::NumpyTensor<float>::FromFile(data_file);
         param.data = data;
     }
     if (!shape_file.empty()) {
-        std::shared_ptr<ti::Tensor> shape = ti::NumpyTensor::FromFile(shape_file);
-        param.shape = shape;
+        std::vector<unsigned long> shape;
+        bool fortran_order;
+        std::vector<unsigned long> data;
+        ::npy::LoadArrayFromNumpy<unsigned long>(std::string(shape_file), shape, fortran_order, data);
+        param.shape = data;
     }
     return true;
 }
 
 void register_1(ti::Net& mnist_net) {
     std::string layer_name = "Convolution28";
-    std::string weight_file = "models/mnist/Parameter5.npy";
+    std::string weight_file = "/Users/ssc/Desktop/workspace/git_repos/tinyinfer/models/mnist/Parameter5.npy";
     std::shared_ptr<ti::Convolution> layer;
     ti::ConvolutionLayerParameter param = {
         .kernel_shape_x = 5,
@@ -58,15 +61,15 @@ void register_1(ti::Net& mnist_net) {
         .dilation_y = 1,
     };
     init_conv_weight(layer_name, weight_file, "", param);
+    layer.reset(new ti::Convolution(std::move(param)));
     layer->set_input_names({"Input3"});
     layer->set_output_names({"Convolution28_Output_0"});
-    layer.reset(new ti::Convolution(std::move(param)));
     mnist_net.register_layer(layer_name, layer);
 }
 
 void register_2(ti::Net& mnist_net) {
     std::string layer_name = "Plus30";
-    std::string weight_file = "models/mnist/Parameter6.npy";
+    std::string weight_file = "/Users/ssc/Desktop/workspace/git_repos/tinyinfer/models/mnist/Parameter6.npy";
     std::shared_ptr<ti::Add> layer;
     ti::AddLayerParameter param;
     init_add_weight(layer_name, weight_file, param);
@@ -107,7 +110,7 @@ void register_4(ti::Net& mnist_net) {
 
 void register_5(ti::Net& mnist_net) {
     std::string layer_name = "Convolution110";
-    std::string weight_file = "models/mnist/Parameter87.npy";
+    std::string weight_file = "/Users/ssc/Desktop/workspace/git_repos/tinyinfer/models/mnist/Parameter87.npy";
     std::shared_ptr<ti::Convolution> layer;
     ti::ConvolutionLayerParameter param = {
         .kernel_shape_x = 5,
@@ -131,7 +134,7 @@ void register_5(ti::Net& mnist_net) {
 
 void register_6(ti::Net& mnist_net) {
     std::string layer_name = "Plus112";
-    std::string weight_file = "models/mnist/Parameter88.npy";
+    std::string weight_file = "/Users/ssc/Desktop/workspace/git_repos/tinyinfer/models/mnist/Parameter88.npy";
     std::shared_ptr<ti::Add> layer;
     ti::AddLayerParameter param;
     init_add_weight(layer_name, weight_file, param);
@@ -172,7 +175,7 @@ void register_8(ti::Net& mnist_net) {
 
 void register_9(ti::Net& mnist_net) {
     std::string layer_name = "Times212_reshape0";
-    std::string shape_file = "models/mnist/Pooling160_Output_0_reshape0_shape.npy";
+    std::string shape_file = "/Users/ssc/Desktop/workspace/git_repos/tinyinfer/models/mnist/Pooling160_Output_0_reshape0_shape.npy";
     std::shared_ptr<ti::Reshape> layer;
     ti::ReshapeLayerParameter param;
     init_reshape_weight(layer_name, "", shape_file, param);
@@ -184,8 +187,8 @@ void register_9(ti::Net& mnist_net) {
 
 void register_10(ti::Net& mnist_net) {
     std::string layer_name = "Times212_reshape1";
-    std::string data_file = "models/mnist/Parameter193.npy";
-    std::string shape_file = "models/mnist/Parameter193_reshape1_shape.npy";
+    std::string data_file = "/Users/ssc/Desktop/workspace/git_repos/tinyinfer/models/mnist/Parameter193.npy";
+    std::string shape_file = "/Users/ssc/Desktop/workspace/git_repos/tinyinfer/models/mnist/Parameter193_reshape1_shape.npy";
     std::shared_ptr<ti::Reshape> layer;
     ti::ReshapeLayerParameter param;
     init_reshape_weight(layer_name, data_file, shape_file, param);
@@ -207,7 +210,7 @@ void register_11(ti::Net& mnist_net) {
 
 void register_12(ti::Net& mnist_net) {
     std::string layer_name = "Plus214";
-    std::string weight_file = "models/mnist/Parameter194.npy";
+    std::string weight_file = "/Users/ssc/Desktop/workspace/git_repos/tinyinfer/models/mnist/Parameter194.npy";
     std::shared_ptr<ti::Add> layer;
     ti::AddLayerParameter param;
     init_add_weight(layer_name, weight_file, param);
