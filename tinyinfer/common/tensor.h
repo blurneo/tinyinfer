@@ -68,7 +68,7 @@ class Tensor {
         int out_c = out->get_c();
         int out_h = out->get_h() + pad_t + pad_d;
         int out_w = out->get_w() + pad_l + pad_r;
-        out.reshape(out_n, out_c, out_h, out_w);
+        out->reshape(out_n, out_c, out_h, out_w);
         int start_h = pad_t;
         int start_w = pad_l;
         for (int c = 0; c < in_c; c++) {
