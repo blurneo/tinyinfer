@@ -2,6 +2,7 @@
 
 #include <map>
 #include <memory>
+#include <set>
 #include "tinyinfer/common/tensor.h"
 #include "tinyinfer/layer/base_layer.h"
 
@@ -10,19 +11,54 @@ namespace ti {
 class Net;
 class Graph {
  public:
-    struct {
-        std::vector<std::string> prev;
-        std::string name;
-        std::vector<std::string> next;
+    typedef struct Node {
+        std::vector<Node> prev;
+        std::shared_ptr<BaseLayer> layer;
+        std::vector<Node> next;
     } Node;
     Graph() {}
-    static Graph FromNet(Net& net) {
-        return Graph();
+    static std::shared_ptr<Graph> FromNet(const Net& net) {
+        std::shared_ptr<Graph> graph(new Graph());
+        auto layer_map = net.get_layer_map();
+        auto net_input_name = net.get_input_name();
+        auto find_layers = [&](std::shared_ptr<BaseLayer> input_layer) -> void {
+            auto output_names = input_layer->get_output_names();
+            for (auto pair : layer_map) {
+                if (pair.first == input_layer->get_layer_name()) continue;
+                auto layer_input_names = pair.second->get_input_names();
+                for (auto output_name : output_names) {
+                    for (auto input_name : layer_input_names) {
+                        if (input_name == output_name)
+                            graph->nodes_.push_back(pair.second);
+                    }
+                }
+            }
+        };
+
+        for (auto pair : layer_map) {
+            auto input_names = pair.second->get_input_names();
+            for (auto input_name : input_names) {
+                if (input_name == net_input_name) {
+                    graph->nodes_.push_back(pair.second);
+                }
+            }
+        }
+        CHECK_RET(graph->nodes_.empty(), false, nullptr, "Graph can't find net input layer");
+
+        int start_idx = 0;
+        while (start_idx < graph->nodes_.size()) {
+            find_layers(graph->nodes_[start_idx]);
+            start_idx++;
+        };
+
+        return graph;
     }
     void restart() {}
     bool is_finished() { return true; }
     std::string next() { return ""; }
  private:
+    std::vector<std::shared_ptr<BaseLayer>> nodes_;
+    Node head_, cur_;
 };
 
 class Net {
@@ -33,6 +69,11 @@ class Net {
     }
     bool register_tensor() {
         return true;
+    }
+    void set_input_name(std::string name) { input_name_ = name; }
+    std::string get_input_name() const { return input_name_; }
+    const std::map<std::string, std::shared_ptr<BaseLayer>> &get_layer_map() const {
+        return layers_;
     }
     bool Forward(const Tensor& input) {
         graph_.restart();
@@ -49,7 +90,7 @@ class Net {
             for (const auto& name : output_names) {
                 output_tensors.push_back(tensors_[name]);
             }
-            bool ret = layer.Forward(input_tensors, output_tensors[0]);
+            bool ret = layer->Forward(input_tensors, output_tensors);
             CHECK_BOOL_RET(ret, true, "Layer :" << layer_name << " forward failed\n");
         }
         return true;
@@ -59,6 +100,7 @@ class Net {
     std::map<std::string, std::shared_ptr<BaseLayer>> layers_;
     std::map<std::string, std::shared_ptr<Tensor>> tensors_;
     Graph graph_;
+    std::string input_name_;
 };
 
 }

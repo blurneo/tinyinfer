@@ -27,6 +27,9 @@ class BaseLayer {
     virtual void set_layer_name(std::string name) {
         layer_name_ = name;
     }
+    virtual std::string get_layer_name() {
+        return layer_name_;
+    }
     virtual void set_input_names(std::vector<std::string> names) {
         input_names_ = names;
     }
