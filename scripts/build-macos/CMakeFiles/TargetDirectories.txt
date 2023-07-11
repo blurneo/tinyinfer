@@ -1,4 +1,0 @@
-/Users/ssc/Desktop/workspace/git_repos/tinyinfer/scripts/build-macos/CMakeFiles/ti.dir
-/Users/ssc/Desktop/workspace/git_repos/tinyinfer/scripts/build-macos/CMakeFiles/mnist_test.dir
-/Users/ssc/Desktop/workspace/git_repos/tinyinfer/scripts/build-macos/CMakeFiles/ALL_BUILD.dir
-/Users/ssc/Desktop/workspace/git_repos/tinyinfer/scripts/build-macos/CMakeFiles/ZERO_CHECK.dir
