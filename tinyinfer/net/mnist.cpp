@@ -20,6 +20,8 @@ bool init_conv_weight(std::string layer_name, std::string weight_file, std::stri
     if (!bias_file.empty()) {
         std::shared_ptr<ti::Tensor> bias = ti::NumpyTensor<float>::FromFile(bias_file);
         param.bias = bias;
+    } else {
+        param.bias.reset(new ti::Tensor());
     }
     return true;
 }
@@ -34,6 +36,8 @@ bool init_reshape_weight(std::string layer_name, std::string data_file, std::str
     if (!data_file.empty()) {
         std::shared_ptr<ti::Tensor> data = ti::NumpyTensor<float>::FromFile(data_file);
         param.data = data;
+    } else {
+        param.data.reset(new ti::Tensor());
     }
     if (!shape_file.empty()) {
         std::vector<unsigned long> shape;
@@ -251,7 +255,7 @@ int main() {
     register_11(mnist_net);
     register_12(mnist_net);
     std::shared_ptr<ti::Tensor> net_input;
-    net_input.reset(new ti::Tensor(1, 3, 224, 224));
+    net_input.reset(new ti::Tensor(1, 1, 28, 28));
     net_input->set_name("Input3");
     mnist_net.set_input_name("Input3");
     mnist_net.prepare_graph();
