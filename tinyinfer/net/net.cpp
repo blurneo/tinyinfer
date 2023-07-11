@@ -32,7 +32,7 @@ bool Net::prepare_graph() {
 bool Net::forward(std::shared_ptr<Tensor> input) {
     graph_->restart();
     tensors_[input->get_name()] = input;
-    while (graph_->is_finished()) {
+    while (!graph_->is_finished()) {
         auto layer = graph_->next();
         const std::vector<std::string> &input_names = layer->get_input_names();
         std::vector<std::shared_ptr<Tensor>> input_tensors;
