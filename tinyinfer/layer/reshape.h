@@ -14,7 +14,7 @@ typedef struct ReshapeLayerParameter : public BaseLayerParameter {
 class Reshape : public BaseLayer {
  public:
     Reshape(ReshapeLayerParameter &&param) : param_(param), BaseLayer(LAYER_RESHAPE) {}
-    bool Forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors, std::vector<std::shared_ptr<Tensor>> output_tensors) override {
+    bool forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors, std::vector<std::shared_ptr<Tensor>> output_tensors) override {
         CHECK_BOOL_RET(input_tensors.size(), 1, "Maxpool input tensor number should be 1")
         const std::shared_ptr<Tensor> &input_tensor = input_tensors[0];
         std::shared_ptr<Tensor> output_tensor = output_tensors[0];

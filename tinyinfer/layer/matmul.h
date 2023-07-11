@@ -15,7 +15,7 @@ class Matmul : public BaseLayer {
  public:
     Matmul(MatmulLayerParam &&param) : param_(param), BaseLayer(LAYER_MATMUL) {}
  private:
-    bool Forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors, std::vector<std::shared_ptr<Tensor>> output_tensors) override {
+    bool forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors, std::vector<std::shared_ptr<Tensor>> output_tensors) override {
         CHECK_BOOL_RET(input_tensors.size(), 2, "Matmul input tensor number should be 2")
         CHECK_BOOL_RET(input_tensors[0]->can_multiply(input_tensors[1]), true, "Two input tensors can't multiply.");
         std::shared_ptr<Tensor> output_tensor = output_tensors[0];

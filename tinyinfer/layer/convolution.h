@@ -25,7 +25,7 @@ typedef struct ConvolutionLayerParam : public BaseLayerParameter {
 class Convolution : public BaseLayer {
  public:
     Convolution(ConvolutionLayerParameter &&param) : param_(std::move(param)), BaseLayer(LAYER_CONVOLUTION) {}
-    bool Forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
+    bool forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
                  std::vector<std::shared_ptr<Tensor>> output_tensors) override {
         CHECK_BOOL_RET(input_tensors.size(), 1, "Convolution input tensor number should be 1")
         const std::shared_ptr<Tensor> &input_tensor = input_tensors[0];

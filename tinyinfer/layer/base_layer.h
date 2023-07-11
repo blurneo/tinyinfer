@@ -22,7 +22,7 @@ typedef struct BaseLayerParameter {
 class BaseLayer {
  public:
     BaseLayer(LayerType layer_type) : layer_type_(layer_type) {}
-    virtual bool Forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
+    virtual bool forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
                          std::vector<std::shared_ptr<Tensor>> output_tensors) = 0;
     virtual void set_layer_name(std::string name) {
         layer_name_ = name;

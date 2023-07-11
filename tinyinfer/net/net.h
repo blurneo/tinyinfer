@@ -11,16 +11,11 @@ namespace ti {
 class Net;
 class Graph {
  public:
-    typedef struct Node {
-        std::vector<Node> prev;
-        std::shared_ptr<BaseLayer> layer;
-        std::vector<Node> next;
-    } Node;
     Graph() {}
-    static std::shared_ptr<Graph> FromNet(const Net& net) {
+    static std::shared_ptr<Graph> FromNet(const Net* net) {
         std::shared_ptr<Graph> graph(new Graph());
-        auto layer_map = net.get_layer_map();
-        auto net_input_name = net.get_input_name();
+        auto layer_map = net->get_layer_map();
+        auto net_input_name = net->get_input_name();
         auto find_layers = [&](std::shared_ptr<BaseLayer> input_layer) -> void {
             auto output_names = input_layer->get_output_names();
             for (auto pair : layer_map) {
@@ -53,12 +48,12 @@ class Graph {
 
         return graph;
     }
-    void restart() {}
-    bool is_finished() { return true; }
-    std::string next() { return ""; }
+    void restart() { current_ = 0;}
+    bool is_finished() { return current_ >= nodes_.size(); }
+    std::shared_ptr<BaseLayer> next() { return nodes_[current_]; }
  private:
     std::vector<std::shared_ptr<BaseLayer>> nodes_;
-    Node head_, cur_;
+    int current_ = 0;
 };
 
 class Net {
@@ -75,11 +70,14 @@ class Net {
     const std::map<std::string, std::shared_ptr<BaseLayer>> &get_layer_map() const {
         return layers_;
     }
-    bool Forward(const Tensor& input) {
-        graph_.restart();
-        while (graph_.is_finished()) {
-            std::string layer_name = graph_.next();
-            auto& layer = layers_[layer_name];
+    bool prepare_graph() {
+        graph_ = Graph::FromNet(this);
+    }
+    bool forward(std::shared_ptr<Tensor> input) {
+        graph_->restart();
+        tensors_[input->get_name()] = input;
+        while (graph_->is_finished()) {
+            auto layer = graph_->next();
             const std::vector<std::string> &input_names = layer->get_input_names();
             std::vector<std::shared_ptr<Tensor>> input_tensors;
             for (const auto& name : input_names) {
@@ -90,8 +88,8 @@ class Net {
             for (const auto& name : output_names) {
                 output_tensors.push_back(tensors_[name]);
             }
-            bool ret = layer->Forward(input_tensors, output_tensors);
-            CHECK_BOOL_RET(ret, true, "Layer :" << layer_name << " forward failed\n");
+            bool ret = layer->forward(input_tensors, output_tensors);
+            CHECK_BOOL_RET(ret, true, "Layer :" << layer->get_layer_name() << " forward failed\n");
         }
         return true;
     }
@@ -99,7 +97,7 @@ class Net {
  private:
     std::map<std::string, std::shared_ptr<BaseLayer>> layers_;
     std::map<std::string, std::shared_ptr<Tensor>> tensors_;
-    Graph graph_;
+    std::shared_ptr<Graph> graph_;
     std::string input_name_;
 };
 

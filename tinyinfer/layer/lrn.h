@@ -17,7 +17,7 @@ typedef struct : public BaseLayerParameter {
 class Lrn : public BaseLayer {
  public:
     Lrn(LrnLayerParameter &&param) : param_(std::move(param)), BaseLayer(LAYER_LRN) {}
-    bool Forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors, std::vector<std::shared_ptr<Tensor>> output_tensors) override {
+    bool forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors, std::vector<std::shared_ptr<Tensor>> output_tensors) override {
         CHECK_BOOL_RET(input_tensors.size(), 1, "Lrn input tensor number should be 1")
         const std::shared_ptr<Tensor> &input_tensor = input_tensors[0];
         std::shared_ptr<Tensor> output_tensor = output_tensors[0];
@@ -28,7 +28,7 @@ class Lrn : public BaseLayer {
         output_tensor->get_values().resize(input_tensor->get_count());
         return kernel(input_tensor, output_tensor);
     }
-    
+
  private:
     bool kernel(const std::shared_ptr<Tensor> &input_tensor, std::shared_ptr<Tensor> &output_tensor) {
         int IN_T_N = input_tensor->get_n();
