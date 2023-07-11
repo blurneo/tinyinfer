@@ -1,7 +1,9 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <memory>
 #include <optional>
+#include <memory>
 
 #include "tinyinfer/common/tensor.h"
 #include "tinyinfer/layer/base_layer.h"
@@ -11,7 +13,7 @@ namespace ti {
 
 class NumpyTensor {
  public:
-    static std::optional<Tensor> FromFile(std::string_view file_path) {
+    static std::shared_ptr<Tensor> FromFile(std::string file_path) {
         std::vector<unsigned long> shape;
         bool fortran_order;
         std::vector<float> data;
@@ -29,8 +31,7 @@ class NumpyTensor {
         if (shape.size() >= 3) {
             w = shape[3];
         }
-        Tensor ret(n, c, h, w, std::move(data));
-        return std::make_optional<Tensor>(ret);
+        return std::make_shared<Tensor>(n, c, h, w, std::move(data));
     }
 };
 

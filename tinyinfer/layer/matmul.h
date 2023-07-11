@@ -7,13 +7,13 @@
 
 namespace ti {
 
-typedef struct MatmulLayerParam : public BaseLayerParameter {
+typedef struct MatmulLayerParameter : public BaseLayerParameter {
 
-} MatmulLayerParam;
+} MatmulLayerParameter;
 
 class Matmul : public BaseLayer {
  public:
-    Matmul(MatmulLayerParam &&param) : param_(param), BaseLayer(LAYER_MATMUL) {}
+    Matmul(MatmulLayerParameter &&param) : param_(param), BaseLayer(LAYER_MATMUL) {}
  private:
     bool forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors, std::vector<std::shared_ptr<Tensor>> output_tensors) override {
         CHECK_BOOL_RET(input_tensors.size(), 2, "Matmul input tensor number should be 2")
@@ -43,7 +43,7 @@ class Matmul : public BaseLayer {
     }
 
  private:
-    MatmulLayerParam param_;
+    MatmulLayerParameter param_;
 };
 
 }

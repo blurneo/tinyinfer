@@ -7,7 +7,7 @@
 
 namespace ti {
 
-typedef struct : public BaseLayerParameter {
+typedef struct LrnLayerParameter : public BaseLayerParameter {
     float alpha;
     float beta;
     float bias;

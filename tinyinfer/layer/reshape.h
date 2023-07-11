@@ -8,40 +8,44 @@
 namespace ti {
 
 typedef struct ReshapeLayerParameter : public BaseLayerParameter {
-    std::vector<int> shapes;
+    std::shared_ptr<Tensor> data;
+    std::shared_ptr<Tensor> shape;
 } ReshapeLayerParameter;
 
 class Reshape : public BaseLayer {
  public:
     Reshape(ReshapeLayerParameter &&param) : param_(param), BaseLayer(LAYER_RESHAPE) {}
     bool forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors, std::vector<std::shared_ptr<Tensor>> output_tensors) override {
-        CHECK_BOOL_RET(input_tensors.size(), 1, "Maxpool input tensor number should be 1")
-        const std::shared_ptr<Tensor> &input_tensor = input_tensors[0];
-        std::shared_ptr<Tensor> output_tensor = output_tensors[0];
-        CHECK_BOOL_RET(param_.shapes.size() > 0, true, "Reshape layer shape param is empty");
-        CHECK_BOOL_RET(param_.shapes.size() <= 4, true, "Reshape layer shape param is too large");
-        int count = 1;
-        for (auto shape : param_.shapes) {
-            count *= shape;
+        // CHECK_BOOL_RET(input_tensors.size(), 1, "Reshape input tensor number should be 1")
+        std::shared_ptr<Tensor> input_tensor;
+        if (input_tensors.empty()) {
+            CHECK_BOOL_RET(param_.data != nullptr, true, "Reshape input tensor number should be 1")
+            input_tensor = param_.data;
+        } else {
+            input_tensor = input_tensors[0];
         }
+        std::shared_ptr<Tensor> output_tensor = output_tensors[0];
+        CHECK_BOOL_RET(param_.shape->dims() > 0, true, "Reshape layer shape param is empty");
+        CHECK_BOOL_RET(param_.shape->dims() <= 4, true, "Reshape layer shape param is too large");
+        int count = param_.shape->get_count();
         CHECK_BOOL_RET(count == input_tensor->get_count(), true, "Reshape layer input count not same with param");
         return kernel(input_tensor, output_tensor);
     }
  private:
     bool kernel(std::shared_ptr<Tensor> input_tensor, std::shared_ptr<Tensor> output_tensor) {
-        int shape_size = param_.shapes.size();
+        int shape_size = param_.shape->dims();
         switch (shape_size) {
             case 1:
-                output_tensor->reshape(0, 0, 0, param_.shapes[0]);
+                output_tensor->reshape(0, 0, 0, param_.shape->get_w());
                 break;
             case 2:
-                output_tensor->reshape(0, 0, param_.shapes[0], param_.shapes[1]);
+                output_tensor->reshape(0, 0, param_.shape->get_h(), param_.shape->get_w());
                 break;
             case 3:
-                output_tensor->reshape(0, param_.shapes[0], param_.shapes[1], param_.shapes[2]);
+                output_tensor->reshape(0, param_.shape->get_c(), param_.shape->get_h(), param_.shape->get_w());
                 break;
             case 4:
-                output_tensor->reshape(param_.shapes[0], param_.shapes[1], param_.shapes[2], param_.shapes[3]);
+                output_tensor->reshape(param_.shape->get_n(), param_.shape->get_c(), param_.shape->get_h(), param_.shape->get_w());
                 break;
             default:
                 break;

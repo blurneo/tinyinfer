@@ -9,15 +9,17 @@
 namespace ti {
 
 typedef struct ConvolutionLayerParam : public BaseLayerParameter {
-    int kernel_shape_x;
-    int kernel_shape_y;
-    int stride_x;
-    int stride_y;
-    int pad_l;
-    int pad_r;
-    int pad_t;
-    int pad_d;
+    int kernel_shape_x = 0;
+    int kernel_shape_y = 0;
+    int stride_x = 1;
+    int stride_y = 1;
+    int pad_l = 0;
+    int pad_r = 0;
+    int pad_t = 0;
+    int pad_d = 0;
     int group = 1;
+    int dilation_x = 1;
+    int dilation_y = 1;
     std::shared_ptr<Tensor> weights;
     std::shared_ptr<Tensor> bias;
 } ConvolutionLayerParameter;
@@ -72,10 +74,13 @@ class Convolution : public BaseLayer {
         std::vector<float> &weight_vals = param_.weights->get_values();
         int weight_n = param_.weights->get_n();
         std::vector<float> &bias_vals = param_.bias->get_values();
+        bool do_bias = true;
+        if (bias_vals.empty()) do_bias = false;
         // implementation
         for (int oc = 0; oc < weight_n; oc++) {
             // int idx0 = in_n * IN_T_C * IN_T_H * IN_T_W;
-            float bias_val = bias_vals[oc];
+            float bias_val = 0;
+            if (do_bias) bias_val = bias_vals[oc];
             for (int in_h = 0, oh = 0; oh < OUT_T_H; in_h+=stride_y, oh++) {
                 int idx1 = in_h * IN_T_W;
                 for (int in_w = 0, ow = 0; ow < OUT_T_W; in_w+=stride_x, ow++) {
@@ -91,7 +96,7 @@ class Convolution : public BaseLayer {
                             }
                         }
                     }
-                    res -= bias_val;
+                    if (do_bias) res -= bias_val;
                     int o_idx = oc * OUT_T_H * OUT_T_W + oh * OUT_T_W + ow;
                     output_vals[o_idx] = res;
                 }
