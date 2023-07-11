@@ -6,7 +6,7 @@
 namespace ti {
 
 typedef struct AddnLayerParameter : public BaseLayerParameter {
-    Tensor weights;
+    std::shared_ptr<Tensor> weights;
 } AddLayerParameter;
 
 class Add : public BaseLayer {
@@ -35,7 +35,7 @@ class Add : public BaseLayer {
         int OUT_T_W = output_tensor->get_w();
         std::vector<float> &output_vals = output_tensor->get_values();
         for (int idx = 0; idx < input_vals.size(); idx++) {
-            output_vals[idx] = input_vals[idx] + param_.weights.get_values()[idx];
+            output_vals[idx] = input_vals[idx] + param_.weights->get_values()[idx];
         }
         return true;
     }

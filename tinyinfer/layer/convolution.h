@@ -18,8 +18,8 @@ typedef struct ConvolutionLayerParam : public BaseLayerParameter {
     int pad_t;
     int pad_d;
     int group = 1;
-    Tensor weights;
-    Tensor bias;
+    std::shared_ptr<Tensor> weights;
+    std::shared_ptr<Tensor> bias;
 } ConvolutionLayerParameter;
 
 class Convolution : public BaseLayer {
@@ -69,9 +69,9 @@ class Convolution : public BaseLayer {
         int stride_x = param_.stride_x, stride_y = param_.stride_x;
         int pad_l = param_.pad_l, pad_r = param_.pad_r, pad_t = param_.pad_t, pad_d = param_.pad_d;
         int group = param_.group;
-        std::vector<float> &weight_vals = param_.weights.get_values();
-        int weight_n = param_.weights.get_n();
-        std::vector<float> &bias_vals = param_.bias.get_values();
+        std::vector<float> &weight_vals = param_.weights->get_values();
+        int weight_n = param_.weights->get_n();
+        std::vector<float> &bias_vals = param_.bias->get_values();
         // implementation
         for (int oc = 0; oc < weight_n; oc++) {
             // int idx0 = in_n * IN_T_C * IN_T_H * IN_T_W;
