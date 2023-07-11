@@ -1,0 +1,7 @@
+Target dependency graph (3 targets)
+ZERO_CHECK in TinyInfer, no dependencies
+mnist_test in TinyInfer, depends on:
+ZERO_CHECK in TinyInfer (explicit)
+ALL_BUILD in TinyInfer, depends on:
+mnist_test in TinyInfer (explicit)
+ZERO_CHECK in TinyInfer (explicit)
