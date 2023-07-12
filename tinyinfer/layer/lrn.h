@@ -21,11 +21,7 @@ class Lrn : public BaseLayer {
         CHECK_BOOL_RET(input_tensors.size(), 1, "Lrn input tensor number should be 1")
         const std::shared_ptr<Tensor> &input_tensor = input_tensors[0];
         std::shared_ptr<Tensor> output_tensor = output_tensors[0];
-        output_tensor->set_n(input_tensor->get_n());
-        output_tensor->set_c(input_tensor->get_c());
-        output_tensor->set_h(input_tensor->get_h());
-        output_tensor->set_w(input_tensor->get_w());
-        output_tensor->get_values().resize(input_tensor->get_count());
+        output_tensor->reshape_like(input_tensor);
         return kernel(input_tensor, output_tensor);
     }
 

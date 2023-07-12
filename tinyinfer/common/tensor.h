@@ -31,6 +31,13 @@ class Tensor {
     void set_w(int w) { w_ = w; }
     const std::vector<float> &get_values() const { return values_;}
     std::vector<float> &get_values() { return values_;}
+    void reshape(std::vector<int> dims_vec) {
+        int n = dims_vec.size() == 4 ? dims_vec[dims_vec.size() - 4] : 0;
+        int c = dims_vec.size() >= 3 ? dims_vec[dims_vec.size() - 3] : 0;
+        int h = dims_vec.size() >= 2 ? dims_vec[dims_vec.size() - 2] : 0;
+        int w = dims_vec.size() >= 1 ? dims_vec[dims_vec.size() - 1] : 0;
+        reshape(n, c, h, w);
+    }
     void reshape(int n, int c, int h, int w) {
         set_n(n);
         set_c(c);
@@ -108,6 +115,11 @@ class Tensor {
             return false;
         }
         return get_w() == in->get_h();
+    }
+    void copy_if_same_count(const std::shared_ptr<Tensor> &in) {
+        if (get_count() == in->get_count()) {
+            std::memcpy(get_values().data(), in->get_values().data(), sizeof(float) * get_count());
+        }
     }
  private:
     void dims_from_shapes(int n, int c, int h, int w) {

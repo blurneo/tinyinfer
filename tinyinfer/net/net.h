@@ -17,7 +17,7 @@ class Net {
     const std::map<std::string, std::shared_ptr<BaseLayer>> &get_layer_map() const;
     bool prepare_tensors();
     bool prepare_graph();
-    bool forward(std::shared_ptr<Tensor> input);
+    bool forward(std::shared_ptr<Tensor> input, std::shared_ptr<Tensor> &output);
     friend Graph;
  private:
     std::map<std::string, std::shared_ptr<BaseLayer>> layers_;

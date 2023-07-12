@@ -29,24 +29,27 @@ bool Net::prepare_graph() {
     graph_ = Graph::FromNet(this);
     return true;
 }
-bool Net::forward(std::shared_ptr<Tensor> input) {
+bool Net::forward(std::shared_ptr<Tensor> input, std::shared_ptr<Tensor> &output) {
     graph_->restart();
     tensors_[input->get_name()] = input;
+    std::vector<std::shared_ptr<Tensor>> input_tensors;
+    std::vector<std::shared_ptr<Tensor>> output_tensors;
     while (!graph_->is_finished()) {
+        input_tensors.clear();
+        output_tensors.clear();
         auto layer = graph_->next();
         const std::vector<std::string> &input_names = layer->get_input_names();
-        std::vector<std::shared_ptr<Tensor>> input_tensors;
         for (const auto& name : input_names) {
             input_tensors.push_back(tensors_[name]);
         }
         const std::vector<std::string> &output_names = layer->get_output_names();
-        std::vector<std::shared_ptr<Tensor>> output_tensors;
         for (const auto& name : output_names) {
             output_tensors.push_back(tensors_[name]);
         }
         bool ret = layer->forward(input_tensors, output_tensors);
         CHECK_BOOL_RET(ret, true, "Layer :" << layer->get_layer_name() << " forward failed\n");
     }
+    output = output_tensors[0];
     return true;
 }
 

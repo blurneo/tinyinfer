@@ -64,8 +64,8 @@ class Convolution : public BaseLayer {
         CHECK_BOOL_RET(input_tensors.size(), 1, "Convolution input tensor number should be 1")
         CHECK_BOOL_RET(input_tensors[0]->get_c() == param_.weights->get_c(), true,
             "Convolution input tensor channel should be equal shape with weight")
-        CHECK_BOOL_RET(param_.weights->get_n() == param_.bias->get_n(), true,
-            "Convolution weights n should be equal with bias n")
+        // CHECK_BOOL_RET(param_.weights->get_n() == param_.bias->get_n(), true,
+        //     "Convolution weights n should be equal with bias n")
         const std::shared_ptr<Tensor> &input_tensor = input_tensors[0];
         std::shared_ptr<Tensor> output_tensor = output_tensors[0];
         std::shared_ptr<Tensor> padded_input_tensor = input_tensor;

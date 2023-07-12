@@ -30,11 +30,7 @@ class MaxPool : public BaseLayer {
                      param_.pad_r - param_.kernel_shape_x) / param_.stride_x + 1;
         int out_h = (input_tensor->get_h() + param_.pad_t +
                      param_.pad_d - param_.kernel_shape_y) / param_.stride_y + 1;
-        output_tensor->set_n(input_tensor->get_n());
-        output_tensor->set_c(input_tensor->get_c());
-        output_tensor->set_h(out_h);
-        output_tensor->set_w(out_w);
-        output_tensor->get_values().resize(input_tensor->get_n() * input_tensor->get_c() * out_h * out_w);
+        output_tensor->reshape(input_tensor->get_n(), input_tensor->get_c(), out_h, out_w);
 
         return kernel(input_tensor, output_tensor);
     }

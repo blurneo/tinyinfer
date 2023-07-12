@@ -53,6 +53,7 @@ class Reshape : public BaseLayer {
             default:
                 break;
         }
+        output_tensor->copy_if_same_count(input_tensor);
         return true;
     }
     ReshapeLayerParameter param_;
