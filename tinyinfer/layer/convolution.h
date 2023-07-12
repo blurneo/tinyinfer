@@ -28,11 +28,14 @@ typedef struct ConvolutionLayerParam : public BaseLayerParameter {
 class Convolution : public BaseLayer {
  public:
     Convolution(ConvolutionLayerParameter &&param) : param_(std::move(param)), BaseLayer(LAYER_CONVOLUTION) {}
-    void get_pad(int w_h, int w_w, int s_h, int s_w, int pad_type,
+    void get_pad(int input_h, int input_w, int s_h, int s_w, int pad_type,
+                 int kernel_shape_y, int kernel_shape_x,
                  int &pad_t, int& pad_d, int& pad_l, int &pad_r) {
         if (pad_type == 0) return;
-        int pad_h = (int)(std::ceil(w_h / s_h));
-        int pad_w = (int)(std::ceil(w_w / s_w));
+        int out_h = (int)(std::ceil(input_h / s_h));
+        int out_w = (int)(std::ceil(input_w / s_w));
+        int pad_h = (out_h - 1) * s_h + kernel_shape_y - input_h;
+        int pad_w = (out_w - 1) * s_w + kernel_shape_x - input_w;
         bool h_even = pad_h % 2 == 0;
         bool w_even = pad_w % 2 == 0;
         if (h_even) {
@@ -63,7 +66,7 @@ class Convolution : public BaseLayer {
         std::shared_ptr<Tensor> padded_input_tensor = input_tensor;
         int pad_t = param_.pad_t, pad_d = param_.pad_d, pad_l = param_.pad_l, pad_r = param_.pad_r;
         get_pad(input_tensor->get_h(), input_tensor->get_w(), param_.stride_y, param_.stride_x,
-            param_.pad_type, pad_t, pad_d, pad_l, pad_r);
+            param_.pad_type, param_.kernel_shape_y, param_.kernel_shape_x, pad_t, pad_d, pad_l, pad_r);
         if (pad_t != 0 || pad_d != 0 || pad_l != 0 || pad_r != 0) {
             padded_input_tensor->reshape_like(input_tensor);
             Tensor::pad(input_tensor, padded_input_tensor, pad_t, pad_d, pad_l, pad_r);
