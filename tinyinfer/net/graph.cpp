@@ -61,16 +61,21 @@ std::shared_ptr<Graph> Graph::FromNet(const Net* net) {
     // push layers with using Width-First-Search
     int start_idx = 0;
     while (start_idx < graph->nodes_.size()) {
+        // get all next layer names connect to the current node
         std::vector<std::string> next_layer_names = find_next_layers(graph->nodes_[start_idx]);
+        // check whether all the previous layers of each next layer has all been traversed
         for (auto next_layer_name : next_layer_names) {
             bool ok = true;
+            // find out all the previous layers of the layer
             std::vector<std::string> pre_layer_names = find_pre_layers(layer_map[next_layer_name]);
+            // check whether all the previous layers have been traversed
             for (auto pre_layer_name : pre_layer_names) {
                 if (traversed[pre_layer_name] == false) {
                     ok = false;
                     break;
                 }
             }
+            // mark the layer as traversed only when all the previous layers have been traversed
             if (ok) {
                 graph->nodes_.push_back(layer_map[next_layer_name]);
                 traversed[next_layer_name] = true;
