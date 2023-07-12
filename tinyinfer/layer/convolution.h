@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <iostream>
+#include <cmath>
 #include "tinyinfer/common/tensor.h"
 #include "tinyinfer/common/check_macro.h"
 #include "tinyinfer/layer/base_layer.h"
@@ -68,6 +69,7 @@ class Convolution : public BaseLayer {
         get_pad(input_tensor->get_h(), input_tensor->get_w(), param_.stride_y, param_.stride_x,
             param_.pad_type, param_.kernel_shape_y, param_.kernel_shape_x, pad_t, pad_d, pad_l, pad_r);
         if (pad_t != 0 || pad_d != 0 || pad_l != 0 || pad_r != 0) {
+            padded_input_tensor.reset(new Tensor());
             padded_input_tensor->reshape_like(input_tensor);
             Tensor::pad(input_tensor, padded_input_tensor, pad_t, pad_d, pad_l, pad_r);
         }
@@ -83,7 +85,7 @@ class Convolution : public BaseLayer {
         output_tensor->set_w(out_w);
         output_tensor->get_values().resize(input_tensor->get_n() * out_h * out_w);
 
-        return kernel(input_tensor, output_tensor);
+        return kernel(padded_input_tensor, output_tensor);
         // return true;
     }
 

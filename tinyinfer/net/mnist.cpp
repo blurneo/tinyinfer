@@ -11,7 +11,8 @@
 #include "tinyinfer/net/net.h"
 #include "tools/numpy_tensor.h"
 
-const std::string project_root_dir = "/Users/ssc/Desktop/TinyInfer/";
+// const std::string project_root_dir = "/Users/ssc/Desktop/TinyInfer/";
+const std::string project_root_dir = "/Users/ssc/Desktop/workspace/git_repos/tinyinfer/";
 
 bool init_conv_weight(std::string layer_name, std::string weight_file, std::string bias_file,
                ti::ConvolutionLayerParameter &param) {
@@ -60,13 +61,14 @@ void register_1(ti::Net& mnist_net) {
         .kernel_shape_y = 5,
         .stride_x = 1,
         .stride_y = 1,
-        .pad_l = 0,
-        .pad_r = 0,
         .pad_t = 0,
         .pad_d = 0,
+        .pad_l = 0,
+        .pad_r = 0,
         .group = 1,
         .dilation_x = 1,
         .dilation_y = 1,
+        .pad_type = 1,
     };
     init_conv_weight(layer_name, weight_file, "", param);
     layer.reset(new ti::Convolution(std::move(param)));
@@ -129,13 +131,14 @@ void register_5(ti::Net& mnist_net) {
         .kernel_shape_y = 5,
         .stride_x = 1,
         .stride_y = 1,
-        .pad_l = 0,
-        .pad_r = 0,
         .pad_t = 0,
         .pad_d = 0,
+        .pad_l = 0,
+        .pad_r = 0,
         .group = 1,
         .dilation_x = 1,
         .dilation_y = 1,
+        .pad_type = 1,
     };
     init_conv_weight(layer_name, weight_file, "", param);
     layer.reset(new ti::Convolution(std::move(param)));
