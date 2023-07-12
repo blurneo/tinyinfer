@@ -56,6 +56,14 @@ class Tensor {
     const float* ptr() const { return values_.data(); }
     int dims() { return dims_; }
     int dims() const { return dims_; }
+    std::vector<int> dims_vector() const {
+        std::vector<int> ret;
+        if (get_n() != 0) ret.push_back(get_n());
+        if (get_c() != 0) ret.push_back(get_c());
+        if (get_h() != 0) ret.push_back(get_h());
+        if (get_w() != 0) ret.push_back(get_w());
+        return ret;
+    }
 
     // TODO: handle when tensor dimension is not 4
     static void pad(const std::shared_ptr<Tensor> &in, std::shared_ptr<Tensor> &out,
@@ -99,7 +107,7 @@ class Tensor {
         if (dims() != 2 || in->dims() != 2) {
             return false;
         }
-        return get_h() == in->get_w() && get_w() == in->get_h();
+        return get_w() == in->get_h();
     }
  private:
     void dims_from_shapes(int n, int c, int h, int w) {

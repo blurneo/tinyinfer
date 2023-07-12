@@ -79,11 +79,12 @@ class Convolution : public BaseLayer {
                      pad_r - param_.kernel_shape_x) / param_.stride_x + 1;
         int out_h = (input_tensor->get_h() + pad_t +
                      pad_d - param_.kernel_shape_y) / param_.stride_y + 1;
-        output_tensor->set_n(1);
-        output_tensor->set_c(input_tensor->get_n());
-        output_tensor->set_h(out_h);
-        output_tensor->set_w(out_w);
-        output_tensor->get_values().resize(input_tensor->get_n() * out_h * out_w);
+        // output_tensor->set_n(1);
+        // output_tensor->set_c(param_.weights->get_n());
+        // output_tensor->set_h(out_h);
+        // output_tensor->set_w(out_w);
+        // output_tensor->get_values().resize(input_tensor->get_n() * out_h * out_w);
+        output_tensor->reshape(1, param_.weights->get_n(), out_h, out_w);
 
         return kernel(padded_input_tensor, output_tensor);
         // return true;

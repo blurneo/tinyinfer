@@ -226,7 +226,7 @@ void register_11(ti::Net& mnist_net) {
     layer.reset(new ti::Matmul(std::move(param)));
     layer->set_layer_name(layer_name);
     layer->set_input_names({"Pooling160_Output_0_reshape0", "Parameter193_reshape1"});
-    layer->set_output_names({"Parameter193_reshape1"});
+    layer->set_output_names({"Times212_Output_0"});
     mnist_net.register_layer(layer_name, layer);
 }
 
@@ -263,10 +263,16 @@ int main() {
     mnist_net.set_input_name("Input3");
     mnist_net.prepare_graph();
     mnist_net.prepare_tensors();
+    int warup_cnt = 3, count = 10;
+    for (int i = 0; i < warup_cnt; i++) {
+        bool ret = mnist_net.forward(net_input);
+        std::cout << "Mnist forward warm up :" << i << ", return : " << ret << "\n";
+    }
     __TIC__(MnistForward)
-    bool ret = mnist_net.forward(net_input);
+    for (int i = 0; i < count; i++) {
+        bool ret = mnist_net.forward(net_input);
+        std::cout << "Mnist forward: " << i << ", return : " << ret << "\n";
+    }
     __TOC__(MnistForward)
-    std::cout << "Mnist forward return : " << ret << "\n";
-
     return 0;
 }

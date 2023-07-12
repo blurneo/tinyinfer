@@ -20,24 +20,10 @@ class NumpyTensor {
         std::vector<dtype> data;
         ::npy::LoadArrayFromNumpy<dtype>(std::string(file_path), shape, fortran_order, data);
         int n = 0, c = 0, h = 0, w = 0;
-        if (shape.size() == 4) {
-            n = shape[0];
-            c = shape[1];
-            h = shape[2];
-            w = shape[3];
-        }
-        if (shape.size() == 3) {
-            c = shape[0];
-            h = shape[1];
-            w = shape[2];
-        }
-        if (shape.size() == 2) {
-            h = shape[0];
-            w = shape[1];
-        }
-        if (shape.size() == 1) {
-            w = shape[0];
-        }
+        n = shape.size() == 4 ? shape[shape.size() - 4] : 0;
+        c = shape.size() >= 3 ? shape[shape.size() - 3] : 0;
+        h = shape.size() >= 2 ? shape[shape.size() - 2] : 0;
+        w = shape.size() >= 1 ? shape[shape.size() - 1] : 0;
         return std::make_shared<Tensor>(n, c, h, w, std::move(data));
     }
 };
