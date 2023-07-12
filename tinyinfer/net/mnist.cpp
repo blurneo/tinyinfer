@@ -274,5 +274,6 @@ int main() {
         std::cout << "Mnist forward: " << i << ", return : " << ret << "\n";
     }
     __TOC__(MnistForward)
+    std::cout << "MnistForward average time measured:" << __TIME_IN_MS__(MnistForward) / count << " ms\n";
     return 0;
 }

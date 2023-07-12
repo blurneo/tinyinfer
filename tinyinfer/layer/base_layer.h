@@ -42,6 +42,22 @@ class BaseLayer {
     virtual std::vector<std::string> get_output_names() const {
         return output_names_;
     }
+    virtual bool is_input_name(std::string name) const {
+        for (auto input_name : input_names_) {
+            if (input_name == name) {
+                return true;
+            }
+        }
+        return false;
+    }
+    virtual bool is_output_name(std::string name) const {
+        for (auto output_name : output_names_) {
+            if (output_name == name) {
+                return true;
+            }
+        }
+        return false;
+    }
     virtual bool is_input(const Tensor &tensor) const {
         for (auto name : input_names_) {
             if (tensor.get_name() == name) {

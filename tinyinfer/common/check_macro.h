@@ -25,7 +25,8 @@
 
 #define __TOC__(mark) \
     auto end_##mark = std::chrono::high_resolution_clock::now(); \
-    auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end_##mark - begin_##mark); \
-    printf("%s time measured: %.3f ms.\n", #mark, elapsed.count() * 1e-6);
+    auto elapsed_ms_##mark = (std::chrono::duration_cast<std::chrono::nanoseconds>(end_##mark - begin_##mark)).count() * 1e-6; \
+    printf("%s time measured: %.3f ms.\n", #mark, elapsed_ms_##mark);
 
+#define __TIME_IN_MS__(mark) elapsed_ms_##mark
 
