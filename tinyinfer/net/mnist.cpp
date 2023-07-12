@@ -7,12 +7,13 @@
 #include "tinyinfer/layer/lrn.h"
 #include "tinyinfer/layer/reshape.h"
 #include "tinyinfer/layer/matmul.h"
+#include "tinyinfer/layer/softmax.h"
 #include "tinyinfer/net/graph.h"
 #include "tinyinfer/net/net.h"
 #include "tools/numpy_tensor.h"
 
-// const std::string project_root_dir = "/Users/ssc/Desktop/TinyInfer/";
-const std::string project_root_dir = "/Users/ssc/Desktop/workspace/git_repos/tinyinfer/";
+ const std::string project_root_dir = "/Users/ssc/Desktop/TinyInfer/";
+//const std::string project_root_dir = "/Users/ssc/Desktop/workspace/git_repos/tinyinfer/";
 
 bool init_conv_weight(std::string layer_name, std::string weight_file, std::string bias_file,
                ti::ConvolutionLayerParameter &param) {

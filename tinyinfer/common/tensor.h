@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <optional>
 #include <string>
 #include <memory>
 #include "common/check_macro.h"
@@ -70,6 +71,17 @@ class Tensor {
         if (get_h() != 0) ret.push_back(get_h());
         if (get_w() != 0) ret.push_back(get_w());
         return ret;
+    }
+    std::optional<int> dim_stride(int dim_idx) const {
+        auto dims_vec = dims_vector();
+        if (dim_idx >= dims_vec.size()) {
+            return std::nullopt;
+        }
+        int stride = 1;
+        for (int idx = dim_idx + 1; idx < dims_vec.size(); idx++) {
+            stride *= dims_vec[idx];
+        }
+        return std::make_optional<int>(stride);
     }
 
     // TODO: handle when tensor dimension is not 4
