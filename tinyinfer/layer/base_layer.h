@@ -15,7 +15,10 @@ typedef enum LayerType {
     LAYER_RESHAPE             = 6,
     LAYER_SOFTMAX             = 7,
     LAYER_CLIP                = 8,
-    LAYER_GLOBAL_AVERAGE_POOL = 9
+    LAYER_GLOBAL_AVERAGE_POOL = 9,
+    LAYER_FLATTEN             = 10,
+    LAYER_BATCH_NORMALIZATION = 11,
+    LAYER_GEMM                = 12
 } LayerType;
 
 typedef struct BaseLayerParameter {
