@@ -24,9 +24,6 @@ class Softmax : public BaseLayer {
     bool kernel(std::shared_ptr<Tensor> input_tensor, std::shared_ptr<Tensor> output_tensor) {
         auto& input_values = input_tensor->get_values();
         auto &output_values = output_tensor->get_values();
-        for (int i = 0; i < input_values.size(); i++) {
-            output_values[i] = std::exp(input_values[i]);
-        }
         auto input_dims_vec = input_tensor->dims_vector();
         int axis_idx = param_.axis < 0 ? param_.axis + input_dims_vec.size() : param_.axis;
         std::optional<int> stride = input_tensor->dim_stride(axis_idx);
@@ -37,6 +34,7 @@ class Softmax : public BaseLayer {
             float sum = 0.f;
             for (int i = 0; i < dim_from_idx; i++) {
                 int idx = i * stride.value();
+                output_values[idx] = std::exp(input_values[idx]);
                 sum += output_values[idx];
             }
             for (int i = 0; i < dim_from_idx; i++) {
