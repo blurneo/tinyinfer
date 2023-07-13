@@ -4,6 +4,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <cmath>
 #include <vector>
 
 namespace ti {
@@ -18,6 +19,12 @@ public:
   Tensor(int n, int c, int h, int w, std::vector<float> &&values)
       : n_(n), c_(c), h_(h), w_(w), values_(std::move(values)) {
     dims_from_shapes(n, c, h, w);
+  }
+  std::shared_ptr<Tensor> clone() {
+    std::shared_ptr<Tensor> ret(new Tensor(get_n(), get_c(), get_h(), get_w()));
+    std::memcpy(ret->get_values().data(), get_values().data(),
+                get_count() * sizeof(float));
+    return ret;
   }
   void set_name(std::string name) { name_ = name; }
   std::string get_name() const { return name_; }
@@ -44,21 +51,15 @@ public:
     set_c(c);
     set_h(h);
     set_w(w);
-    int cnt = 0;
-    if (n > 0) {
-      cnt = cnt == 0 ? n : cnt * n;
-    }
-    if (c > 0) {
-      cnt = cnt == 0 ? c : cnt * c;
-    }
-    if (h > 0) {
-      cnt = cnt == 0 ? h : cnt * h;
-    }
-    if (w > 0) {
-      cnt = cnt == 0 ? w : cnt * w;
-    }
-    values_.resize(cnt, 0);
+    int cnt = 1;
     dims_from_shapes(n, c, h, w);
+    auto dims_vec = dims_vector();
+    for (auto dim : dims_vec) {
+      cnt *= dim;
+    }
+    if (values_.size() != cnt) {
+      values_.resize(cnt, 0);
+    }
   }
   float *ptr() { return values_.data(); }
   const float *ptr() const { return values_.data(); }
@@ -134,6 +135,47 @@ public:
       std::memcpy(get_values().data(), in->get_values().data(),
                   sizeof(float) * get_count());
     }
+  }
+  void transpose_2d() {
+    if (dims() != 2) {
+      return;
+    }
+    int h = get_h(), w = get_w();
+    for (int i = 0; i < h; h++) {
+      for (int j = 0; j < w; j++) {
+        get_values()[j * h + i] = get_values()[i * w + j];
+      }
+    }
+    reshape(0, 0, w, h);
+  }
+  std::shared_ptr<Tensor> get_transpose_2d() {
+    std::shared_ptr<Tensor> ret = clone();
+    ret->transpose_2d();
+    return ret;
+  }
+  bool can_uni_broadcast(const std::shared_ptr<Tensor> &tensor) {
+    if (is_alike(tensor)) {
+      return true;
+    }
+    if (get_count() > tensor->get_count()) {
+      return false;
+    }
+    auto dims_vec = dims_vector();
+    auto input_dims_vec = tensor->dims_vector();
+    if (dims_vec.size() > input_dims_vec.size()) return false;
+    std::vector<int> ret_dims_vec;
+    int ret_dims_size = input_dims_vec.size();
+    for (int i = dims_vec.size(); i < ret_dims_size; i++) {
+      dims_vec.insert(dims_vec.begin(), 1);
+    }
+    for (int i = 0; i < ret_dims_size; i++) {
+      if (dims_vec[i] != input_dims_vec[i]) {
+        if (dims_vec[i] != 1 && input_dims_vec[i] != 1) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
 private:
