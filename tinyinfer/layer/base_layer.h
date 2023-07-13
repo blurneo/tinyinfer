@@ -2,6 +2,8 @@
 
 #include "tinyinfer/common/tensor.h"
 #include <vector>
+#include <ostream>
+#include "tinyinfer/net/serializer.h"
 
 namespace ti {
 
@@ -77,12 +79,22 @@ public:
     }
     return false;
   }
+  void serialize(Serializer& serializer) {
+    serialize_internal(serializer);
+  }
 
 protected:
   std::string layer_name_;
   std::vector<std::string> input_names_;
   std::vector<std::string> output_names_;
   LayerType layer_type_;
+  #define DEFINE_SERIALIZE_MEMBER(x) template<class R> void serialize_internal(R &r) { r.begin(); r.operator()x; r.end(); }
+  DEFINE_SERIALIZE_MEMBER(
+    ("layer_name", layer_name_)
+    ("layer_type", (int)layer_type_)
+    ("input_names", input_names_)
+    ("output_names", output_names_)
+  )
 };
 
 } // namespace ti

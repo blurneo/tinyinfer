@@ -1,4 +1,5 @@
 #pragma once
+#include <ostream>
 #include "tinyinfer/common/check_macro.h"
 #include "tinyinfer/common/tensor.h"
 #include "tinyinfer/layer/base_layer.h"

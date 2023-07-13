@@ -5,6 +5,7 @@
 #include <map>
 #include <memory>
 #include <set>
+#include <string>
 
 namespace ti {
 
@@ -19,6 +20,7 @@ public:
   bool prepare_tensors();
   bool prepare_graph();
   bool forward(std::shared_ptr<Tensor> input, std::shared_ptr<Tensor> &output);
+  bool serialize(std::string file_path);
   friend Graph;
 
 private:
@@ -26,6 +28,7 @@ private:
   std::map<std::string, std::shared_ptr<Tensor>> tensors_;
   std::shared_ptr<Graph> graph_;
   std::string input_name_;
+  std::shared_ptr<Serializer> serializer_;
 };
 
 } // namespace ti

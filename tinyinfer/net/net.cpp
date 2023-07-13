@@ -56,4 +56,17 @@ bool Net::forward(std::shared_ptr<Tensor> input,
   return true;
 }
 
+bool Net::serialize(std::string file_path) {
+    if (!serializer_) serializer_.reset(new Serializer());
+    graph_->restart();
+    CHECK_BOOL_RET(serializer_->start(file_path), true, "Graph serializer open failed");
+    while (!graph_->is_finished()) {
+      auto layer = graph_->next();
+      layer->serialize(*serializer_);
+    }
+    serializer_->finish();
+
+    return true;
+}
+
 } // namespace ti

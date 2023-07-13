@@ -281,6 +281,7 @@ int main() {
   mnist_net.set_input_name("Input3");
   mnist_net.prepare_graph();
   mnist_net.prepare_tensors();
+  mnist_net.serialize(project_root_dir + "net.txt");
   std::shared_ptr<ti::Tensor> net_output;
   int warup_cnt = 3, count = 10;
   for (int i = 0; i < warup_cnt; i++) {
