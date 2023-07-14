@@ -18,6 +18,7 @@ typedef struct GemmLayerParameter : public BaseLayerParameter {
 
 class Gemm : public BaseLayer {
 public:
+  Gemm() : BaseLayer(LAYER_GEMM) {}
   Gemm(GemmLayerParameter &&param) : param_(param), BaseLayer(LAYER_GEMM) {}
 
 private:

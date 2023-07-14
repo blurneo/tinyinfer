@@ -16,6 +16,7 @@ typedef struct LrnLayerParameter : public BaseLayerParameter {
 
 class Lrn : public BaseLayer {
 public:
+  Lrn() : BaseLayer(LAYER_LRN) {}
   Lrn(LrnLayerParameter &&param)
       : param_(std::move(param)), BaseLayer(LAYER_LRN) {}
   bool forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,

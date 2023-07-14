@@ -10,6 +10,7 @@ typedef struct ReluLayerParam : public BaseLayerParameter {
 
 class Relu : public BaseLayer {
 public:
+  Relu() : BaseLayer(LAYER_RELU) {}
   Relu(ReluLayerParameter &&param)
       : param_(std::move(param)), BaseLayer(LAYER_RELU) {}
   bool forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,

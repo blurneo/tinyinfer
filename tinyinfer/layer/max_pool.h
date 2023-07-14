@@ -19,6 +19,7 @@ typedef struct MaxPoolLayerParameter : public BaseLayerParameter {
 
 class MaxPool : public BaseLayer {
 public:
+  MaxPool() : BaseLayer(LAYER_MAXPOOL) {}
   MaxPool(MaxPoolLayerParameter &&param)
       : param_(std::move(param)), BaseLayer(LAYER_MAXPOOL) {}
   bool forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,

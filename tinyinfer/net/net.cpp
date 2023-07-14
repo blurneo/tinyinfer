@@ -74,11 +74,9 @@ bool Net::deserialize(std::string file_path) {
     bool ret = deserializer_->start(file_path);
     CHECK_BOOL_RET(ret, true, "Deserializer start failed\n")
     while (!deserializer_->is_finished()) {
-      std::shared_ptr<BaseLayer> layer(new BaseLayer());
-      ret = layer->deserialize(*deserializer_);
-      CHECK_BOOL_RET(ret, true, "Deserializer deserialize failed\n")
+      std::shared_ptr<BaseLayer> layer = deserializer_->deserialize_one_layer();
+      CHECK_RET(layer != nullptr, true, false, "Deserializer deserialize failed\n")
       layers_[layer->get_layer_name()] = layer;
-      // printf("read layer type: %d\n", layer->get_layertype());
     }
     ret = deserializer_->finish();
     CHECK_BOOL_RET(ret, true, "Deserializer finish failed\n")

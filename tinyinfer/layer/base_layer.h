@@ -4,8 +4,6 @@
 #include "tinyinfer/layer/layer_type.h"
 #include <vector>
 #include <ostream>
-#include "tinyinfer/net/serializer.h"
-#include "tinyinfer/net/deserializer.h"
 
 namespace ti {
 
@@ -13,6 +11,8 @@ typedef struct BaseLayerParameter {
 
 } BaseLayerParameter;
 
+class Serializer;
+class Deserializer;
 class BaseLayer {
 public:
   BaseLayer() {}
@@ -67,12 +67,8 @@ public:
     }
     return false;
   }
-  virtual void serialize(Serializer& serializer) {
-    serialize_internal(serializer);
-  }
-  virtual bool deserialize(Deserializer& deserializer) {
-    return deserialize_internal(deserializer);
-  }
+  virtual void serialize(Serializer& serializer);
+  virtual bool deserialize(Deserializer& deserializer);
 
 protected:
   std::string layer_name_;
@@ -84,14 +80,12 @@ protected:
         r.begin(); r.operator()x; r.end(); \
       } \
       template<class R> bool deserialize_internal(R &r) { \
-        CHECK_BOOL_RET(r.begin_layer(), true, "deserializer begin failed\n"); \
         r.operator()x; \
-        CHECK_BOOL_RET(r.end_layer(), true, "deserializer end failed\n"); \
         return true; \
       }
   DEFINE_SERIALIZE_MEMBER(
-    ("layer_name", layer_name_)
     ("layer_type", layer_type_)
+    ("layer_name", layer_name_)
     ("input_names", input_names_)
     ("output_names", output_names_)
   )

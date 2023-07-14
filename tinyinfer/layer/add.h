@@ -6,12 +6,13 @@
 
 namespace ti {
 
-typedef struct AddnLayerParameter : public BaseLayerParameter {
+typedef struct AddLayerParameter : public BaseLayerParameter {
   std::shared_ptr<Tensor> weights;
 } AddLayerParameter;
 
 class Add : public BaseLayer {
 public:
+  Add() : BaseLayer(LAYER_ADD) {}
   Add(AddLayerParameter &&param)
       : param_(std::move(param)), BaseLayer(LAYER_ADD) {}
   bool is_compatible(const std::shared_ptr<Tensor> &input_tensor,

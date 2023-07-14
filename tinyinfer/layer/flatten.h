@@ -13,6 +13,7 @@ typedef struct FlattenLayerParameter : public BaseLayerParameter {
 
 class Flatten : public BaseLayer {
 public:
+  Flatten() : BaseLayer(LAYER_FLATTEN) {}
   Flatten(FlattenLayerParameter &&param)
       : param_(param), BaseLayer(LAYER_FLATTEN) {}
   bool forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,

@@ -14,6 +14,7 @@ typedef struct ReshapeLayerParameter : public BaseLayerParameter {
 
 class Reshape : public BaseLayer {
 public:
+  Reshape() : BaseLayer(LAYER_RESHAPE) {}
   Reshape(ReshapeLayerParameter &&param)
       : param_(param), BaseLayer(LAYER_RESHAPE) {}
   bool forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,

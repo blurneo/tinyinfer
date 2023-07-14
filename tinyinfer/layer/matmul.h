@@ -13,6 +13,7 @@ typedef struct MatmulLayerParameter : public BaseLayerParameter {
 
 class Matmul : public BaseLayer {
 public:
+  Matmul() : BaseLayer(LAYER_MATMUL) {}
   Matmul(MatmulLayerParameter &&param)
       : param_(param), BaseLayer(LAYER_MATMUL) {}
 

@@ -28,6 +28,7 @@ typedef struct ConvolutionLayerParam : public BaseLayerParameter {
 
 class Convolution : public BaseLayer {
 public:
+  Convolution() : BaseLayer(LAYER_CONVOLUTION) {}
   Convolution(ConvolutionLayerParameter &&param)
       : param_(std::move(param)), BaseLayer(LAYER_CONVOLUTION) {}
   void get_pad(int input_h, int input_w, int s_h, int s_w, int pad_type,

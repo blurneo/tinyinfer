@@ -6,6 +6,7 @@
 #include <fstream>
 #include "tinyinfer/common/check_macro.h"
 #include "tinyinfer/layer/base_layer.h"
+#include "tinyinfer/layer/layer_factory.h"
 
 namespace ti {
 
@@ -41,6 +42,20 @@ class Deserializer {
     bool end_layer() {
         // ifs << "\n";
         return true;
+    }
+    std::shared_ptr<BaseLayer> deserialize_one_layer() {
+        CHECK_RET(begin_layer(), true, nullptr, "deserializer begin failed\n");
+        int pos = sstream.tellg();
+        LayerType layer_type;
+        this->operator()("layer_type", layer_type);
+        std::shared_ptr<BaseLayer> layer = LayerFactory::get(layer_type);
+        sstream.seekg(pos);
+        if (!layer->deserialize(*this)) {
+            std::cerr << "Serialize layer failed\n";
+            return nullptr;
+        }
+        CHECK_RET(end_layer(), true, nullptr, "deserializer end failed\n");
+        return layer;
     }
     template<typename T>
     Deserializer& operator()(std::string field_name, T&& member) {

@@ -16,6 +16,7 @@ typedef struct BatchNormalizationLayerParam : public BaseLayerParameter {
 
 class BatchNormalization : public BaseLayer {
 public:
+  BatchNormalization() : BaseLayer(LAYER_BATCH_NORMALIZATION) {}
   BatchNormalization(BatchNormalizationLayerParameter &&param)
       : param_(std::move(param)), BaseLayer(LAYER_BATCH_NORMALIZATION) {}
   bool forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,

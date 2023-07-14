@@ -12,6 +12,7 @@ typedef struct ClipLayerParam : public BaseLayerParameter {
 
 class Clip : public BaseLayer {
 public:
+  Clip() : BaseLayer(LAYER_CLIP) {}
   Clip(ClipLayerParameter &&param)
       : param_(std::move(param)), BaseLayer(LAYER_CLIP) {}
   bool forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,

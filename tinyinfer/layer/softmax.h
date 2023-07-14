@@ -12,6 +12,7 @@ typedef struct SoftmaxLayerParam : public BaseLayerParameter {
 
 class Softmax : public BaseLayer {
 public:
+  Softmax() : BaseLayer(LAYER_SOFTMAX) {}
   Softmax(SoftmaxLayerParameter &&param)
       : param_(std::move(param)), BaseLayer(LAYER_SOFTMAX) {}
   bool forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,

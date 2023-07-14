@@ -11,6 +11,7 @@ typedef struct GlobalAveragePoolLayerParameter : public BaseLayerParameter {
 
 class GlobalAveragePool : public BaseLayer {
 public:
+  GlobalAveragePool() : BaseLayer(LAYER_GLOBAL_AVERAGE_POOL) {}
   GlobalAveragePool(GlobalAveragePoolLayerParameter &&param)
       : param_(std::move(param)), BaseLayer(LAYER_GLOBAL_AVERAGE_POOL) {}
   bool forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
