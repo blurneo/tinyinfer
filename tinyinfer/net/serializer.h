@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include "tinyinfer/common/check_macro.h"
+#include "tinyinfer/layer/base_layer.h"
 
 namespace ti {
 
@@ -50,6 +51,10 @@ class Serializer {
     void write(const std::vector<std::string> &member) {
         ofs << "str[]: " << member.size() << " ";
         for (auto m : member) write(m);
+    }
+    template<typename T>
+    void write(T *layer_param) {
+        layer_param->serialize(*this);
     }
  private:
     std::ofstream ofs;
