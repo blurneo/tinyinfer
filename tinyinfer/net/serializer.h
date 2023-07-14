@@ -74,6 +74,10 @@ class Serializer {
         for (auto m : member) write(m);
     }
     void write(std::shared_ptr<Tensor> tensor) {
+        if (tensor->get_values().empty()) {
+            ofs << "empty";
+            return;
+        }
         tensor->serialize(*this);
     }
     template<typename T>

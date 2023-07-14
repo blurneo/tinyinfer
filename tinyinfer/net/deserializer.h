@@ -107,7 +107,7 @@ class Deserializer {
         CHECK_BOOL_RET(flag == "str:", true, "read string failed\n")
         int cnt;
         sstream >> cnt;
-        sstream >> member;
+        if (cnt != 0) sstream >> member;
         CHECK_BOOL_RET(member.length(), cnt, "read string length not matched\n");
         return true;
     }
@@ -152,6 +152,12 @@ class Deserializer {
     }
     bool read(std::shared_ptr<Tensor> &tensor) {
         tensor.reset(new Tensor());
+        int pos = sstream.tellg();
+        sstream >> flag;
+        sstream.seekg(pos);
+        if (flag == "empty") {
+            return true;
+        }
         return tensor->deserialize(*this);
     }
     template<typename T>
