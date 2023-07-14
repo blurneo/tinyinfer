@@ -84,6 +84,18 @@ class Deserializer {
         sstream >> member;
         return true;
     }
+    bool read(unsigned long &member) {
+        sstream >> flag;
+        CHECK_BOOL_RET(flag == "uint64:", true, "read uint64 failed\n")
+        sstream >> member;
+        return true;
+    }
+    bool read(bool &member) {
+        sstream >> flag;
+        CHECK_BOOL_RET(flag == "bool:", true, "read bool failed\n")
+        sstream >> member;
+        return true;
+    }
     bool read(float &member) {
         sstream >> flag;
         CHECK_BOOL_RET(flag == "f4:", true, "read float failed\n")
@@ -112,6 +124,19 @@ class Deserializer {
         CHECK_BOOL_RET(member.size(), cnt, "read float array size not matched\n");
         return true;
     }
+    bool read(std::vector<unsigned long> &member) {
+        sstream >> flag;
+        CHECK_BOOL_RET(flag == "uint64[]:", true, "read uin64 array failed\n")
+        int cnt;
+        sstream >> cnt;
+        for (int i = 0; i < cnt; i++) {
+            float m;
+            CHECK_BOOL_RET(read(m), true, "read uint64 failed\n");
+            member.emplace_back(std::move(m));
+        }
+        CHECK_BOOL_RET(member.size(), cnt, "read uint64 array size not matched\n");
+        return true;
+    }
     bool read(std::vector<std::string> &member) {
         sstream >> flag;
         CHECK_BOOL_RET(flag == "str[]:", true, "read str array failed\n")
@@ -124,6 +149,14 @@ class Deserializer {
         }
         CHECK_BOOL_RET(member.size(), cnt, "read string array size not matched\n");
         return true;
+    }
+    bool read(std::shared_ptr<Tensor> &tensor) {
+        tensor.reset(new Tensor());
+        return tensor->deserialize(*this);
+    }
+    template<typename T>
+    bool read(T layer_param) {
+        return layer_param->deserialize_internal(*this);
     }
  private:
     std::ifstream ifs;

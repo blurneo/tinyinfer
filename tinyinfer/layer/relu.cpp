@@ -3,6 +3,8 @@
 #include "tinyinfer/common/tensor.h"
 #include "tinyinfer/layer/base_layer.h"
 #include "tinyinfer/layer/relu.h"
+#include "tinyinfer/net/serializer.h"
+#include "tinyinfer/net/deserializer.h"
 
 namespace ti {
 
@@ -33,6 +35,14 @@ bool Relu::kernel(std::shared_ptr<Tensor> input_tensor,
       output_vals[idx] = in > 0 ? in : 0;
     }
     return true;
+}
+
+void Relu::serialize(Serializer& serializer) {
+    BaseLayer::serialize(serializer);
+}
+
+bool Relu::deserialize(Deserializer& deserializer) {
+    return BaseLayer::deserialize(deserializer);
 }
 
 } // namespace ti

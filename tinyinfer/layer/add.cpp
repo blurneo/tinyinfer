@@ -4,6 +4,8 @@
 #include "tinyinfer/common/tensor.h"
 #include "tinyinfer/layer/base_layer.h"
 #include "tinyinfer/layer/add.h"
+#include "tinyinfer/net/serializer.h"
+#include "tinyinfer/net/deserializer.h"
 
 namespace ti {
 
@@ -106,6 +108,15 @@ bool Add::kernel(const std::shared_ptr<Tensor> &input_tensor,
       }
     }
     return true;
+}
+
+void Add::serialize(Serializer& serializer) {
+    BaseLayer::serialize(serializer);
+    Add::serialize_internal(serializer);
+}
+bool Add::deserialize(Deserializer& deserializer) {
+    CHECK_BOOL_RET(BaseLayer::deserialize(deserializer), true, "Add baselayer deserialize failed");
+    return Add::deserialize_internal(deserializer);
 }
 
 } // namespace ti

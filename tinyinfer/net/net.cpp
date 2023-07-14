@@ -62,7 +62,7 @@ bool Net::serialize(std::string file_path) {
     CHECK_BOOL_RET(serializer_->start(file_path, graph_->layer_count()), true, "Graph serializer open failed");
     while (!graph_->is_finished()) {
       auto layer = graph_->next();
-      layer->serialize(*serializer_);
+      serializer_->serialize_one_layer(layer);
     }
     serializer_->finish();
 

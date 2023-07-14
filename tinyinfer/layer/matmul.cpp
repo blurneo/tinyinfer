@@ -5,6 +5,8 @@
 #include "tinyinfer/layer/base_layer.h"
 #include "tinyinfer/layer/matmul.h"
 #include <vector>
+#include "tinyinfer/net/serializer.h"
+#include "tinyinfer/net/deserializer.h"
 
 namespace ti {
 
@@ -39,6 +41,16 @@ bool Matmul::kernel(std::shared_ptr<Tensor> input_tensor1,
       }
     }
     return true;
+}
+
+void Matmul::serialize(Serializer& serializer) {
+    BaseLayer::serialize(serializer);
+    // serialize_internal(serializer);
+}
+
+bool Matmul::deserialize(Deserializer& deserializer) {
+    return BaseLayer::deserialize(deserializer);
+    // return deserialize_internal(deserializer);
 }
 
 } // namespace ti

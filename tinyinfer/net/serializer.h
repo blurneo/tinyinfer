@@ -20,11 +20,16 @@ class Serializer {
         ofs << "NetEnd\n";
         ofs.close();
     }
-    void begin() {
+    void begin_layer() {
         ofs << "Layer: ";
     }
-    void end() {
+    void end_layer() {
         ofs << "\n";
+    }
+    void serialize_one_layer(std::shared_ptr<BaseLayer> layer) {
+        begin_layer();
+        layer->serialize(*this);
+        end_layer();
     }
     template<typename T>
     Serializer& operator()(std::string field_name, T member) {
@@ -32,12 +37,24 @@ class Serializer {
         this->write(member);
         return *this;
     }
+    void write(LayerType member) {
+        ofs << "int: ";
+        ofs << member << " ";
+    }
+    void write(bool member) {
+        ofs << "bool: ";
+        ofs << member << " ";
+    }
     void write(int member) {
         ofs << "int: ";
         ofs << member << " ";
     }
     void write(float member) {
         ofs << "f4: ";
+        ofs << member << " ";
+    }
+    void write(unsigned long member) {
+        ofs << "uint64: ";
         ofs << member << " ";
     }
     void write(std::string member) {
@@ -48,13 +65,20 @@ class Serializer {
         ofs << "f4[]: " << member.size() << " ";
         for (auto m : member) write(m);
     }
+    void write(const std::vector<unsigned long> &member) {
+        ofs << "uint64[]: " << member.size() << " ";
+        for (auto m : member) write(m);
+    }
     void write(const std::vector<std::string> &member) {
         ofs << "str[]: " << member.size() << " ";
         for (auto m : member) write(m);
     }
+    void write(std::shared_ptr<Tensor> tensor) {
+        tensor->serialize(*this);
+    }
     template<typename T>
-    void write(T *layer_param) {
-        layer_param->serialize(*this);
+    void write(T layer_param) {
+        layer_param->serialize_internal(*this);
     }
  private:
     std::ofstream ofs;

@@ -16,9 +16,9 @@
 #include "tools/numpy_tensor.h"
 #include <iostream>
 
-// const std::string project_root_dir = "/Users/ssc/Desktop/TinyInfer/";
-const std::string project_root_dir =
-"/Users/ssc/Desktop/workspace/git_repos/tinyinfer/";
+const std::string project_root_dir = "/Users/ssc/Desktop/TinyInfer/";
+// const std::string project_root_dir =
+// "/Users/ssc/Desktop/workspace/git_repos/tinyinfer/";
 
 bool init_conv_weight(std::string layer_name, std::string weight_file,
                       std::string bias_file,
@@ -282,7 +282,7 @@ int main() {
   mnist_net.prepare_graph();
   mnist_net.prepare_tensors();
   mnist_net.serialize(project_root_dir + "net.txt");
-  mnist_net.deserialize(project_root_dir + "net.txt");
+//  mnist_net.deserialize(project_root_dir + "net.txt");
   // std::shared_ptr<ti::Tensor> net_output;
   // int warup_cnt = 3, count = 10;
   // for (int i = 0; i < warup_cnt; i++) {

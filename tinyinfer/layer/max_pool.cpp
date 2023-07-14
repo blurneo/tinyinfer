@@ -4,6 +4,8 @@
 #include "tinyinfer/common/tensor.h"
 #include "tinyinfer/layer/base_layer.h"
 #include "tinyinfer/layer/max_pool.h"
+#include "tinyinfer/net/serializer.h"
+#include "tinyinfer/net/deserializer.h"
 
 namespace ti {
 
@@ -68,6 +70,16 @@ bool MaxPool::kernel(std::shared_ptr<Tensor> input_tensor,
     }
 
     return true;
+}
+
+void MaxPool::serialize(Serializer& serializer) {
+    BaseLayer::serialize(serializer);
+    MaxPool::serialize_internal(serializer);
+}
+
+bool MaxPool::deserialize(Deserializer& deserializer) {
+    CHECK_BOOL_RET(BaseLayer::deserialize(deserializer), true, "Maxpool baselayer deserialize failed");
+    return MaxPool::deserialize_internal(deserializer);
 }
 
 } // namespace ti

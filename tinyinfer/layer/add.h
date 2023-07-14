@@ -1,6 +1,7 @@
 #pragma once
 #include <ostream>
 #include "tinyinfer/common/check_macro.h"
+#include "tinyinfer/net/serialize_macro.h"
 #include "tinyinfer/common/tensor.h"
 #include "tinyinfer/layer/base_layer.h"
 
@@ -8,8 +9,13 @@ namespace ti {
 
 typedef struct AddLayerParameter : public BaseLayerParameter {
   std::shared_ptr<Tensor> weights;
+  DEFINE_SERIALIZE_MEMBER(
+    ("weights", weights)
+  )
 } AddLayerParameter;
 
+class Serializer;
+class Deserializer;
 class Add : public BaseLayer {
 public:
   Add() : BaseLayer(LAYER_ADD) {}
@@ -19,13 +25,17 @@ public:
                      std::vector<int> &broadcast_shapes);
   bool forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
                std::vector<std::shared_ptr<Tensor>> output_tensors) override;
-
+  virtual void serialize(Serializer &serializer);
+  virtual bool deserialize(Deserializer& deserializer);
 private:
   bool kernel(const std::shared_ptr<Tensor> &input_tensor,
               std::shared_ptr<Tensor> output_tensor);
 
 private:
   AddLayerParameter param_;
+  DEFINE_SERIALIZE_MEMBER(
+    ("param_", &param_)
+  )
 };
 
 } // namespace ti

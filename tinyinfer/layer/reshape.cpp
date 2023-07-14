@@ -5,6 +5,8 @@
 #include "tinyinfer/layer/base_layer.h"
 #include "tinyinfer/layer/reshape.h"
 #include <vector>
+#include "tinyinfer/net/serializer.h"
+#include "tinyinfer/net/deserializer.h"
 
 namespace ti {
 
@@ -57,6 +59,16 @@ bool Reshape::kernel(std::shared_ptr<Tensor> input_tensor,
     }
     output_tensor->copy_if_same_count(input_tensor);
     return true;
+}
+
+void Reshape::serialize(Serializer& serializer) {
+    BaseLayer::serialize(serializer);
+    Reshape::serialize_internal(serializer);
+}
+
+bool Reshape::deserialize(Deserializer& deserializer) {
+    CHECK_BOOL_RET(BaseLayer::deserialize(deserializer), true, "Reshape baselayer deserialize failed");
+    return Reshape::deserialize_internal(deserializer);
 }
 
 } // namespace ti

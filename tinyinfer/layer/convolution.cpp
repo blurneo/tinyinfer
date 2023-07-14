@@ -7,6 +7,8 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+#include "tinyinfer/net/serializer.h"
+#include "tinyinfer/net/deserializer.h"
 
 namespace ti {
 void Convolution::get_pad(int input_h, int input_w, int s_h, int s_w, int pad_type,
@@ -140,6 +142,16 @@ bool Convolution::kernel(const std::shared_ptr<Tensor> &input_tensor,
     }
 
     return true;
+}
+
+void Convolution::serialize(Serializer& serializer) {
+    BaseLayer::serialize(serializer);
+    Convolution::serialize_internal(serializer);
+}
+
+bool Convolution::deserialize(Deserializer& deserializer) {
+    CHECK_BOOL_RET(BaseLayer::deserialize(deserializer), true, "Convolution baselayer deserialize failed");
+    return Convolution::deserialize_internal(deserializer);
 }
 
 } // namespace ti

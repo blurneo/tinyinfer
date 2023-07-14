@@ -5,6 +5,8 @@
 #include "tinyinfer/layer/base_layer.h"
 #include "tinyinfer/layer/gemm.h"
 #include <vector>
+#include "tinyinfer/net/serializer.h"
+#include "tinyinfer/net/deserializer.h"
 
 namespace ti {
 
@@ -52,6 +54,16 @@ bool Gemm::kernel(std::shared_ptr<Tensor> input_tensor1,
       }
     }
     return true;
+}
+
+void Gemm::serialize(Serializer& serializer) {
+    BaseLayer::serialize(serializer);
+    Gemm::serialize_internal(serializer);
+}
+
+bool Gemm::deserialize(Deserializer& deserializer) {
+    CHECK_BOOL_RET(BaseLayer::deserialize(deserializer), true, "Gemm baselayer deserialize failed");
+    return Gemm::deserialize_internal(deserializer);
 }
 
 } // namespace ti
