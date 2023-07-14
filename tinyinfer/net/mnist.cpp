@@ -16,9 +16,9 @@
 #include "tools/numpy_tensor.h"
 #include <iostream>
 
-const std::string project_root_dir = "/Users/ssc/Desktop/TinyInfer/";
-// const std::string project_root_dir =
-// "/Users/ssc/Desktop/workspace/git_repos/tinyinfer/";
+// const std::string project_root_dir = "/Users/ssc/Desktop/TinyInfer/";
+const std::string project_root_dir =
+"/Users/ssc/Desktop/workspace/git_repos/tinyinfer/";
 
 bool init_conv_weight(std::string layer_name, std::string weight_file,
                       std::string bias_file,
@@ -282,24 +282,25 @@ int main() {
   mnist_net.prepare_graph();
   mnist_net.prepare_tensors();
   mnist_net.serialize(project_root_dir + "net.txt");
-  std::shared_ptr<ti::Tensor> net_output;
-  int warup_cnt = 3, count = 10;
-  for (int i = 0; i < warup_cnt; i++) {
-    bool ret = mnist_net.forward(net_input, net_output);
-    std::cout << "Mnist forward warm up :" << i << ", return : " << ret << "\n";
-  }
-  __TIC__(MnistForward)
-  for (int i = 0; i < count; i++) {
-    bool ret = mnist_net.forward(net_input, net_output);
-    std::cout << "Mnist forward: " << i << ", return : " << ret << "\n";
-  }
-  __TOC__(MnistForward)
-  std::cout << "MnistForward average time measured:"
-            << __TIME_IN_MS__(MnistForward) / count << " ms\n";
-  std::cout << "Net output: ";
-  for (auto val : net_output->get_values()) {
-    std::cout << val << ", ";
-  }
-  std::cout << "\n";
+  mnist_net.deserialize(project_root_dir + "net.txt");
+  // std::shared_ptr<ti::Tensor> net_output;
+  // int warup_cnt = 3, count = 10;
+  // for (int i = 0; i < warup_cnt; i++) {
+  //   bool ret = mnist_net.forward(net_input, net_output);
+  //   std::cout << "Mnist forward warm up :" << i << ", return : " << ret << "\n";
+  // }
+  // __TIC__(MnistForward)
+  // for (int i = 0; i < count; i++) {
+  //   bool ret = mnist_net.forward(net_input, net_output);
+  //   std::cout << "Mnist forward: " << i << ", return : " << ret << "\n";
+  // }
+  // __TOC__(MnistForward)
+  // std::cout << "MnistForward average time measured:"
+  //           << __TIME_IN_MS__(MnistForward) / count << " ms\n";
+  // std::cout << "Net output: ";
+  // for (auto val : net_output->get_values()) {
+  //   std::cout << val << ", ";
+  // }
+  // std::cout << "\n";
   return 0;
 }

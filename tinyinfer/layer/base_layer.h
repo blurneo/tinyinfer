@@ -1,6 +1,7 @@
 #pragma once
 
 #include "tinyinfer/common/tensor.h"
+#include "tinyinfer/layer/layer_type.h"
 #include <vector>
 #include <ostream>
 #include "tinyinfer/net/serializer.h"
@@ -8,32 +9,18 @@
 
 namespace ti {
 
-typedef enum LayerType {
-  LAYER_ADD = 0,
-  LAYER_CONVOLUTION = 1,
-  LAYER_LRN = 2,
-  LAYER_MATMUL = 3,
-  LAYER_MAXPOOL = 4,
-  LAYER_RELU = 5,
-  LAYER_RESHAPE = 6,
-  LAYER_SOFTMAX = 7,
-  LAYER_CLIP = 8,
-  LAYER_GLOBAL_AVERAGE_POOL = 9,
-  LAYER_FLATTEN = 10,
-  LAYER_BATCH_NORMALIZATION = 11,
-  LAYER_GEMM = 12
-} LayerType;
-
 typedef struct BaseLayerParameter {
 
 } BaseLayerParameter;
 
 class BaseLayer {
 public:
+  BaseLayer() {}
   BaseLayer(LayerType layer_type) : layer_type_(layer_type) {}
   virtual bool
   forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
-          std::vector<std::shared_ptr<Tensor>> output_tensors) = 0;
+          std::vector<std::shared_ptr<Tensor>> output_tensors) { return true; }
+  int get_layertype() { return layer_type_; }
   virtual void set_layer_name(std::string name) { layer_name_ = name; }
   virtual std::string get_layer_name() { return layer_name_; }
   virtual void set_input_names(std::vector<std::string> names) {
@@ -91,19 +78,20 @@ protected:
   std::string layer_name_;
   std::vector<std::string> input_names_;
   std::vector<std::string> output_names_;
-  LayerType layer_type_;
+  LayerType layer_type_ = LAYER_NONE;
   #define DEFINE_SERIALIZE_MEMBER(x) \
       template<class R> void serialize_internal(R &r) { \
         r.begin(); r.operator()x; r.end(); \
       } \
       template<class R> bool deserialize_internal(R &r) { \
-        CHECK_BOOL_RET(r.begin(), true, "deserializer begin failed\n"); \
+        CHECK_BOOL_RET(r.begin_layer(), true, "deserializer begin failed\n"); \
         r.operator()x; \
-        CHECK_BOOL_RET(r.end(), true, "deserializer end failed\n"); \
+        CHECK_BOOL_RET(r.end_layer(), true, "deserializer end failed\n"); \
+        return true; \
       }
   DEFINE_SERIALIZE_MEMBER(
     ("layer_name", layer_name_)
-    ("layer_type", (int)layer_type_)
+    ("layer_type", layer_type_)
     ("input_names", input_names_)
     ("output_names", output_names_)
   )

@@ -59,13 +59,29 @@ bool Net::forward(std::shared_ptr<Tensor> input,
 bool Net::serialize(std::string file_path) {
     if (!serializer_) serializer_.reset(new Serializer());
     graph_->restart();
-    CHECK_BOOL_RET(serializer_->start(file_path), true, "Graph serializer open failed");
+    CHECK_BOOL_RET(serializer_->start(file_path, graph_->layer_count()), true, "Graph serializer open failed");
     while (!graph_->is_finished()) {
       auto layer = graph_->next();
       layer->serialize(*serializer_);
     }
     serializer_->finish();
 
+    return true;
+}
+
+bool Net::deserialize(std::string file_path) {
+    if (!deserializer_) deserializer_.reset(new Deserializer());
+    bool ret = deserializer_->start(file_path);
+    CHECK_BOOL_RET(ret, true, "Deserializer start failed\n")
+    while (!deserializer_->is_finished()) {
+      std::shared_ptr<BaseLayer> layer(new BaseLayer());
+      ret = layer->deserialize(*deserializer_);
+      CHECK_BOOL_RET(ret, true, "Deserializer deserialize failed\n")
+      layers_[layer->get_layer_name()] = layer;
+      // printf("read layer type: %d\n", layer->get_layertype());
+    }
+    ret = deserializer_->finish();
+    CHECK_BOOL_RET(ret, true, "Deserializer finish failed\n")
     return true;
 }
 

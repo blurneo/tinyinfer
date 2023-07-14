@@ -9,12 +9,14 @@ namespace ti {
 
 class Serializer {
  public:
-    bool start(std::string file_path) {
+    bool start(std::string file_path, int layer_num) {
         ofs.open(file_path);
         CHECK_BOOL_RET(ofs.is_open(), true, "Serializer file open failed\n")
+        ofs << "NetStart: " << layer_num << "\n";
         return true;
     }
     void finish() {
+        ofs << "NetEnd\n";
         ofs.close();
     }
     void begin() {
@@ -33,21 +35,21 @@ class Serializer {
         ofs << "int: ";
         ofs << member << " ";
     }
-    void write(int member) {
+    void write(float member) {
         ofs << "f4: ";
         ofs << member << " ";
     }
     void write(std::string member) {
-        ofs << "str, " << member.length() << ": ";
+        ofs << "str: " << member.length() << " ";
         ofs << member << " ";
     }
     void write(const std::vector<float> &member) {
-        ofs << "f4[], " << member.size() << ": ";
+        ofs << "f4[]: " << member.size() << " ";
         for (auto m : member) write(m);
     }
     void write(const std::vector<std::string> &member) {
-        ofs << "str[], " << member.size() << ": ";
-        for (auto m : member) ofs << m << " ";
+        ofs << "str[]: " << member.size() << " ";
+        for (auto m : member) write(m);
     }
  private:
     std::ofstream ofs;

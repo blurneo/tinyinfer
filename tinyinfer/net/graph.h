@@ -14,6 +14,7 @@ public:
   void restart() { current_ = 0; }
   bool is_finished() { return current_ >= nodes_.size(); }
   std::shared_ptr<BaseLayer> next() { return nodes_[current_++]; }
+  int layer_count() { return nodes_.size(); }
 
 private:
   std::vector<std::shared_ptr<BaseLayer>> nodes_;
