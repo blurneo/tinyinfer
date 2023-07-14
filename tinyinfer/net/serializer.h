@@ -75,7 +75,7 @@ class Serializer {
     }
     void write(std::shared_ptr<Tensor> tensor) {
         if (tensor->get_values().empty()) {
-            ofs << "empty";
+            ofs << "empty ";
             return;
         }
         tensor->serialize(*this);

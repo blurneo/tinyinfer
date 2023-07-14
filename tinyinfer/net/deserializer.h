@@ -130,7 +130,7 @@ class Deserializer {
         int cnt;
         sstream >> cnt;
         for (int i = 0; i < cnt; i++) {
-            float m;
+            unsigned long m;
             CHECK_BOOL_RET(read(m), true, "read uint64 failed\n");
             member.emplace_back(std::move(m));
         }
@@ -154,10 +154,10 @@ class Deserializer {
         tensor.reset(new Tensor());
         int pos = sstream.tellg();
         sstream >> flag;
-        sstream.seekg(pos);
         if (flag == "empty") {
             return true;
         }
+        sstream.seekg(pos);
         return tensor->deserialize(*this);
     }
     template<typename T>

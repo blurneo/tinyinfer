@@ -279,28 +279,29 @@ int main() {
       project_root_dir + "models/mnist/input_0.npy");
   net_input->set_name("Input3");
   mnist_net.set_input_name("Input3");
-  mnist_net.prepare_graph();
-  mnist_net.prepare_tensors();
-  mnist_net.serialize(project_root_dir + "net.txt");
-//  mnist_net.deserialize(project_root_dir + "net.txt");
-  // std::shared_ptr<ti::Tensor> net_output;
-  // int warup_cnt = 3, count = 10;
-  // for (int i = 0; i < warup_cnt; i++) {
-  //   bool ret = mnist_net.forward(net_input, net_output);
-  //   std::cout << "Mnist forward warm up :" << i << ", return : " << ret << "\n";
-  // }
-  // __TIC__(MnistForward)
-  // for (int i = 0; i < count; i++) {
-  //   bool ret = mnist_net.forward(net_input, net_output);
-  //   std::cout << "Mnist forward: " << i << ", return : " << ret << "\n";
-  // }
-  // __TOC__(MnistForward)
-  // std::cout << "MnistForward average time measured:"
-  //           << __TIME_IN_MS__(MnistForward) / count << " ms\n";
-  // std::cout << "Net output: ";
-  // for (auto val : net_output->get_values()) {
-  //   std::cout << val << ", ";
-  // }
-  // std::cout << "\n";
+    
+      mnist_net.prepare_graph();
+      mnist_net.prepare_tensors();
+//  mnist_net.serialize(project_root_dir + "net.txt");
+  mnist_net.deserialize(project_root_dir + "net.txt");
+   std::shared_ptr<ti::Tensor> net_output;
+   int warup_cnt = 3, count = 10;
+   for (int i = 0; i < warup_cnt; i++) {
+     bool ret = mnist_net.forward(net_input, net_output);
+     std::cout << "Mnist forward warm up :" << i << ", return : " << ret << "\n";
+   }
+   __TIC__(MnistForward)
+   for (int i = 0; i < count; i++) {
+     bool ret = mnist_net.forward(net_input, net_output);
+     std::cout << "Mnist forward: " << i << ", return : " << ret << "\n";
+   }
+   __TOC__(MnistForward)
+   std::cout << "MnistForward average time measured:"
+             << __TIME_IN_MS__(MnistForward) / count << " ms\n";
+   std::cout << "Net output: ";
+   for (auto val : net_output->get_values()) {
+     std::cout << val << ", ";
+   }
+   std::cout << "\n";
   return 0;
 }
