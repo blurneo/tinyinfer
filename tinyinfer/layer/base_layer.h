@@ -4,6 +4,7 @@
 #include <vector>
 #include <ostream>
 #include "tinyinfer/net/serializer.h"
+#include "tinyinfer/net/deserializer.h"
 
 namespace ti {
 
@@ -79,8 +80,11 @@ public:
     }
     return false;
   }
-  void serialize(Serializer& serializer) {
+  virtual void serialize(Serializer& serializer) {
     serialize_internal(serializer);
+  }
+  virtual bool deserialize(Deserializer& deserializer) {
+    return deserialize_internal(deserializer);
   }
 
 protected:
@@ -88,7 +92,15 @@ protected:
   std::vector<std::string> input_names_;
   std::vector<std::string> output_names_;
   LayerType layer_type_;
-  #define DEFINE_SERIALIZE_MEMBER(x) template<class R> void serialize_internal(R &r) { r.begin(); r.operator()x; r.end(); }
+  #define DEFINE_SERIALIZE_MEMBER(x) \
+      template<class R> void serialize_internal(R &r) { \
+        r.begin(); r.operator()x; r.end(); \
+      } \
+      template<class R> bool deserialize_internal(R &r) { \
+        CHECK_BOOL_RET(r.begin(), true, "deserializer begin failed\n"); \
+        r.operator()x; \
+        CHECK_BOOL_RET(r.end(), true, "deserializer end failed\n"); \
+      }
   DEFINE_SERIALIZE_MEMBER(
     ("layer_name", layer_name_)
     ("layer_type", (int)layer_type_)

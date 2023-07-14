@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include "tinyinfer/common/check_macro.h"
 
 namespace ti {
 
@@ -29,15 +30,23 @@ class Serializer {
         return *this;
     }
     void write(int member) {
+        ofs << "int: ";
+        ofs << member << " ";
+    }
+    void write(int member) {
+        ofs << "f4: ";
         ofs << member << " ";
     }
     void write(std::string member) {
+        ofs << "str, " << member.length() << ": ";
         ofs << member << " ";
     }
     void write(const std::vector<float> &member) {
-        for (auto m : member) ofs << m << " ";
+        ofs << "f4[], " << member.size() << ": ";
+        for (auto m : member) write(m);
     }
     void write(const std::vector<std::string> &member) {
+        ofs << "str[], " << member.size() << ": ";
         for (auto m : member) ofs << m << " ";
     }
  private:
