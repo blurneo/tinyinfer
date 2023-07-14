@@ -6,9 +6,12 @@
 #include <string>
 #include <cmath>
 #include <vector>
+#include "tinyinfer/net/serialize_macro.h"
 
 namespace ti {
 
+class Serializer;
+class Deserializer;
 class Tensor {
 public:
   Tensor() : n_(0), c_(0), h_(0), w_(0) {}
@@ -217,11 +220,25 @@ private:
     dims_ = dims;
   }
 
+public:
+  virtual void serialize(Serializer& serializer);
+  virtual bool deserialize(Deserializer& deserializer);
+
+
 private:
   std::vector<float> values_;
   int n_, c_, h_, w_;
   int dims_;
   std::string name_;
+  DEFINE_SERIALIZE_MEMBER(
+  ("values", values_)
+  ("n", n_)
+  ("c", c_)
+  ("h", h_)
+  ("w", w_)
+  ("dims", dims_)
+  ("name", name_)
+  )
 };
 
 } // namespace ti

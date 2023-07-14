@@ -4,6 +4,7 @@
 #include "tinyinfer/layer/layer_type.h"
 #include <vector>
 #include <ostream>
+#include "tinyinfer/net/serialize_macro.h"
 
 namespace ti {
 
@@ -75,14 +76,7 @@ protected:
   std::vector<std::string> input_names_;
   std::vector<std::string> output_names_;
   LayerType layer_type_ = LAYER_NONE;
-  #define DEFINE_SERIALIZE_MEMBER(x) \
-      template<class R> void serialize_internal(R &r) { \
-        r.begin(); r.operator()x; r.end(); \
-      } \
-      template<class R> bool deserialize_internal(R &r) { \
-        r.operator()x; \
-        return true; \
-      }
+
   DEFINE_SERIALIZE_MEMBER(
     ("layer_type", layer_type_)
     ("layer_name", layer_name_)

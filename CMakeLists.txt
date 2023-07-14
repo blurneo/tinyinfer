@@ -13,6 +13,14 @@ include_directories(
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
-add_library(ti STATIC tinyinfer/net/net.cpp tinyinfer/net/graph.cpp tinyinfer/layer/base_layer.cpp)
+file(GLOB_RECURSE srcs
+    ${PROJECT_SOURCE_DIR}/tinyinfer/common/*.h
+    ${PROJECT_SOURCE_DIR}/tinyinfer/common/*.cpp
+    ${PROJECT_SOURCE_DIR}/tinyinfer/layer/*.cpp
+    ${PROJECT_SOURCE_DIR}/tinyinfer/layer/*.cpp
+    ${PROJECT_SOURCE_DIR}/tinyinfer/net/*.cpp
+    ${PROJECT_SOURCE_DIR}/tinyinfer/net/*.cpp
+)
+add_library(ti STATIC ${srcs})
 add_executable(mnist_test tinyinfer/net/mnist.cpp)
 target_link_libraries(mnist_test PRIVATE ti)
