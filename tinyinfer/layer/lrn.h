@@ -2,7 +2,7 @@
 
 #include "tinyinfer/common/check_macro.h"
 #include "tinyinfer/common/tensor.h"
-#include "tinyinfer/layer/base_layer.h"
+#include "tinyinfer/common/base_layer.h"
 #include <cmath>
 
 namespace ti {

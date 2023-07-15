@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "base_layer.h"
+#include "tinyinfer/common/base_layer.h"
 #include "tinyinfer/layer/add.h"
 #include "tinyinfer/layer/clip.h"
 #include "tinyinfer/layer/convolution.h"

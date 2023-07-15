@@ -1,6 +1,6 @@
 #include "tinyinfer/common/tensor.h"
-#include "tinyinfer/net/serializer.h"
-#include "tinyinfer/net/deserializer.h"
+#include "tinyinfer/reflection/serializer.h"
+#include "tinyinfer/reflection/deserializer.h"
 
 namespace ti {
 

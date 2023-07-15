@@ -5,7 +5,7 @@
 #include <sstream>
 #include <fstream>
 #include "tinyinfer/common/check_macro.h"
-#include "tinyinfer/layer/base_layer.h"
+#include "tinyinfer/common/base_layer.h"
 #include "tinyinfer/layer/layer_factory.h"
 
 namespace ti {

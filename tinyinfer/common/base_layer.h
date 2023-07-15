@@ -4,7 +4,7 @@
 #include "tinyinfer/layer/layer_type.h"
 #include <vector>
 #include <ostream>
-#include "tinyinfer/net/serialize_macro.h"
+#include "tinyinfer/reflection/serialize_macro.h"
 
 namespace ti {
 

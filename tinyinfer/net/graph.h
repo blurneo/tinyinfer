@@ -1,6 +1,6 @@
 #pragma once
 
-#include "tinyinfer/layer/base_layer.h"
+#include "tinyinfer/common/base_layer.h"
 #include <memory>
 #include <vector>
 

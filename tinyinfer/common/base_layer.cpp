@@ -1,6 +1,6 @@
-#include "tinyinfer/layer/base_layer.h"
-#include "tinyinfer/net/serializer.h"
-#include "tinyinfer/net/deserializer.h"
+#include "tinyinfer/common/base_layer.h"
+#include "tinyinfer/reflection/serializer.h"
+#include "tinyinfer/reflection/deserializer.h"
 
 namespace ti {
 

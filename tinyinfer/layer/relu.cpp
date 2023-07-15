@@ -1,10 +1,10 @@
 #pragma once
 #include "tinyinfer/common/check_macro.h"
 #include "tinyinfer/common/tensor.h"
-#include "tinyinfer/layer/base_layer.h"
+#include "tinyinfer/common/base_layer.h"
 #include "tinyinfer/layer/relu.h"
-#include "tinyinfer/net/serializer.h"
-#include "tinyinfer/net/deserializer.h"
+#include "tinyinfer/reflection/serializer.h"
+#include "tinyinfer/reflection/deserializer.h"
 
 namespace ti {
 

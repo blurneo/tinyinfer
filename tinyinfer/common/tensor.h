@@ -6,7 +6,7 @@
 #include <string>
 #include <cmath>
 #include <vector>
-#include "tinyinfer/net/serialize_macro.h"
+#include "tinyinfer/reflection/serialize_macro.h"
 
 namespace ti {
 
