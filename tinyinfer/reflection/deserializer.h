@@ -13,12 +13,14 @@ namespace ti {
 class Deserializer {
  public:
     bool start(std::string file_path) {
-        ifs.open(file_path);
+        ifs.open(file_path, std::ios::binary);
         CHECK_BOOL_RET(ifs.is_open(), true, "Deserializer file open failed\n")
-        sstream << ifs.rdbuf();
-        sstream >> flag;
-        CHECK_BOOL_RET(flag == "NetStart:", true, "Deserializer start failed\n")
-        sstream >> layer_num_;
+        unsigned long val;
+        ifs.read((char*)&val, sizeof(val));
+        CHECK_BOOL_RET(val == NET_START_VAL, true, "Deserializer start failed\n")
+        int intval;
+        ifs.read((char*)&intval, sizeof(intval));
+        layer_num_ = intval;
         cur_layer_ = 0;
         return true;
     }
@@ -26,30 +28,36 @@ class Deserializer {
         return cur_layer_ >= layer_num_;
     }
     bool finish() {
-        sstream >> flag;
-        CHECK_BOOL_RET(flag == "NetEnd", true, "Deserializer finish failed\n")
+        unsigned long val;
+        ifs.read((char*)&val, sizeof(val));
+        CHECK_BOOL_RET(val == NET_END_VAL, true, "Deserializer finish failed\n")
         ifs.close();
         return true;
     }
     bool begin_layer() {
-        sstream >> flag;
-        if (flag != "Layer:") {
+        unsigned long val;
+        ifs.read((char*)&val, sizeof(val));
+        if (val != LAYER_START_VAL) {
             return false;
         }
         cur_layer_++;
         return true;
     }
     bool end_layer() {
-        // ifs << "\n";
+        unsigned long val;
+        ifs.read((char*)&val, sizeof(val));
+        if (val != LAYER_END_VAL) {
+            return false;
+        }
         return true;
     }
     std::shared_ptr<BaseLayer> deserialize_one_layer() {
         CHECK_RET(begin_layer(), true, nullptr, "deserializer begin failed\n");
-        int pos = sstream.tellg();
+        int pos = ifs.tellg();
         LayerType layer_type;
-        this->operator()("layer_type", layer_type);
+        read(layer_type);
         std::shared_ptr<BaseLayer> layer = LayerFactory::get(layer_type);
-        sstream.seekg(pos);
+        ifs.seekg(pos);
         if (!layer->deserialize(*this)) {
             std::cerr << "Serialize layer failed\n";
             return nullptr;
@@ -59,63 +67,46 @@ class Deserializer {
     }
     template<typename T>
     Deserializer& operator()(std::string field_name, T&& member) {
-        sstream >> flag;
-        if (flag != field_name) {
-            std::cerr << "err read fieldname\n";
-            // return std::nullopt;
-        }
         if (!this->read(member)) {
             std::cerr << "err read member\n";
-            // return std::nullopt;
         }
         return *this;
     }
     bool read(LayerType &member) {
-        sstream >> flag;
-        CHECK_BOOL_RET(flag == "int:", true, "read int failed\n")
         int val;
-        sstream >> val;
+        ifs.read((char*)&val, sizeof(val));
         member = (LayerType)val;
         return true;
     }
     bool read(int &member) {
-        sstream >> flag;
-        CHECK_BOOL_RET(flag == "int:", true, "read int failed\n")
-        sstream >> member;
+        ifs.read((char*)&member, sizeof(member));;
         return true;
     }
     bool read(unsigned long &member) {
-        sstream >> flag;
-        CHECK_BOOL_RET(flag == "uint64:", true, "read uint64 failed\n")
-        sstream >> member;
+        ifs.read((char*)&member, sizeof(member));
         return true;
     }
     bool read(bool &member) {
-        sstream >> flag;
-        CHECK_BOOL_RET(flag == "bool:", true, "read bool failed\n")
-        sstream >> member;
+        int val;
+        ifs.read((char*)&val, sizeof(val));
+        member = val;
         return true;
     }
     bool read(float &member) {
-        sstream >> flag;
-        CHECK_BOOL_RET(flag == "f4:", true, "read float failed\n")
-        sstream >> member;
+        ifs.read((char*)&member, sizeof(member));
         return true;
     }
     bool read(std::string &member) {
-        sstream >> flag;
-        CHECK_BOOL_RET(flag == "str:", true, "read string failed\n")
         int cnt;
-        sstream >> cnt;
-        if (cnt != 0) sstream >> member;
+        ifs.read((char*)&cnt, sizeof(cnt));
+        member.resize(cnt);
+        if (cnt != 0) ifs.read(member.data(), cnt);
         CHECK_BOOL_RET(member.length(), cnt, "read string length not matched\n");
         return true;
     }
     bool read(std::vector<float> &member) {
-        sstream >> flag;
-        CHECK_BOOL_RET(flag == "f4[]:", true, "read float array failed\n")
         int cnt;
-        sstream >> cnt;
+        ifs.read((char*)&cnt, sizeof(cnt));
         for (int i = 0; i < cnt; i++) {
             float m;
             CHECK_BOOL_RET(read(m), true, "read float failed\n");
@@ -125,10 +116,8 @@ class Deserializer {
         return true;
     }
     bool read(std::vector<unsigned long> &member) {
-        sstream >> flag;
-        CHECK_BOOL_RET(flag == "uint64[]:", true, "read uin64 array failed\n")
         int cnt;
-        sstream >> cnt;
+        ifs.read((char*)&cnt, sizeof(cnt));
         for (int i = 0; i < cnt; i++) {
             unsigned long m;
             CHECK_BOOL_RET(read(m), true, "read uint64 failed\n");
@@ -138,10 +127,8 @@ class Deserializer {
         return true;
     }
     bool read(std::vector<std::string> &member) {
-        sstream >> flag;
-        CHECK_BOOL_RET(flag == "str[]:", true, "read str array failed\n")
         int cnt;
-        sstream >> cnt;
+        ifs.read((char*)&cnt, sizeof(cnt));
         for (int i = 0; i < cnt; i++) {
             std::string m;
             CHECK_BOOL_RET(read(m), true, "read string failed\n");
@@ -152,12 +139,13 @@ class Deserializer {
     }
     bool read(std::shared_ptr<Tensor> &tensor) {
         tensor.reset(new Tensor());
-        int pos = sstream.tellg();
-        sstream >> flag;
-        if (flag == "empty") {
+        int pos = ifs.tellg();
+        unsigned long val;
+        ifs.read((char*)&val, sizeof(val));
+        if (val == EMPTY_VAL) {
             return true;
         }
-        sstream.seekg(pos);
+        ifs.seekg(pos);
         return tensor->deserialize(*this);
     }
     template<typename T>
@@ -166,8 +154,6 @@ class Deserializer {
     }
  private:
     std::ifstream ifs;
-    std::stringstream sstream;
-    std::string flag;
     int cur_layer_ = 0;
     int layer_num_ = 0;
 };

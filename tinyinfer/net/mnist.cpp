@@ -261,8 +261,11 @@ void register_12(ti::Net &mnist_net) {
   mnist_net.register_layer(layer_name, layer);
 }
 
+#define IS_SERIALIZE 0
+
 int main() {
   ti::Net mnist_net;
+#if IS_SERIALIZE
   register_1(mnist_net);
   register_2(mnist_net);
   register_3(mnist_net);
@@ -275,15 +278,19 @@ int main() {
   register_10(mnist_net);
   register_11(mnist_net);
   register_12(mnist_net);
+#endif
   std::shared_ptr<ti::Tensor> net_input = ti::NumpyTensor<float>::FromFile(
       project_root_dir + "models/mnist/input_0.npy");
   net_input->set_name("Input3");
   mnist_net.set_input_name("Input3");
-    
+
+#if IS_SERIALIZE
   mnist_net.prepare_graph();
   mnist_net.prepare_tensors();
   mnist_net.serialize(project_root_dir + "net.txt");
+#else
   mnist_net.deserialize(project_root_dir + "net.txt");
+#endif
   std::shared_ptr<ti::Tensor> net_output;
   int warup_cnt = 3, count = 10;
   for (int i = 0; i < warup_cnt; i++) {

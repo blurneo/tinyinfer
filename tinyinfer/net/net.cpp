@@ -80,6 +80,8 @@ bool Net::deserialize(std::string file_path) {
     }
     ret = deserializer_->finish();
     CHECK_BOOL_RET(ret, true, "Deserializer finish failed\n")
+    prepare_graph();
+    prepare_tensors();
     return true;
 }
 
