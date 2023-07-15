@@ -17,14 +17,14 @@ typedef struct MaxPoolLayerParameter : public BaseLayerParameter {
   int pad_l;
   int pad_r;
   DEFINE_SERIALIZE_MEMBER(
-    ("kshapex", kernel_shape_x)
-    ("kshapey", kernel_shape_y)
-    ("stridex", stride_x)
-    ("stridey", stride_y)
-    ("padt", pad_t)
-    ("padd", pad_d)
-    ("padl", pad_l)
-    ("padr", pad_r)
+    (kernel_shape_x)
+    (kernel_shape_y)
+    (stride_x)
+    (stride_y)
+    (pad_t)
+    (pad_d)
+    (pad_l)
+    (pad_r)
   )
 } MaxPoolLayerParameter;
 
@@ -45,7 +45,7 @@ private:
 private:
   MaxPoolLayerParameter param_;
   DEFINE_SERIALIZE_MEMBER(
-    ("param_", &param_)
+    (&param_)
   )
 };
 

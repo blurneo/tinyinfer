@@ -34,7 +34,7 @@ class Serializer {
         end_layer();
     }
     template<typename T>
-    Serializer& operator()(std::string field_name, T member) {
+    Serializer& operator()(T member) {
         this->write(member);
         return *this;
     }

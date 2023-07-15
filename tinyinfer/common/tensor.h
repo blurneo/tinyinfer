@@ -76,13 +76,13 @@ private:
   int dims_;
   std::string name_;
   DEFINE_SERIALIZE_MEMBER(
-  ("values", values_)
-  ("n", n_)
-  ("c", c_)
-  ("h", h_)
-  ("w", w_)
-  ("dims", dims_)
-  ("name", name_)
+  (values_)
+  (n_)
+  (c_)
+  (h_)
+  (w_)
+  (dims_)
+  (name_)
   )
 };
 

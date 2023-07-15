@@ -12,8 +12,8 @@ typedef struct ReshapeLayerParameter : public BaseLayerParameter {
   std::shared_ptr<Tensor> data;
   std::vector<unsigned long> shape;
   DEFINE_SERIALIZE_MEMBER(
-    ("data", data)
-    ("shape", shape)
+    (data)
+    (shape)
   )
 } ReshapeLayerParameter;
 
@@ -33,7 +33,7 @@ private:
               std::shared_ptr<Tensor> output_tensor);
   ReshapeLayerParameter param_;
   DEFINE_SERIALIZE_MEMBER(
-    ("param_", &param_)
+    (&param_)
   )
 };
 

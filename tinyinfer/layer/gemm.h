@@ -16,12 +16,12 @@ typedef struct GemmLayerParameter : public BaseLayerParameter {
   std::shared_ptr<Tensor> weights;
   std::shared_ptr<Tensor> bias;
   DEFINE_SERIALIZE_MEMBER(
-    ("alpha", alpha)
-    ("beta", beta)
-    ("trans_a", trans_a)
-    ("trans_b", trans_b)
-    ("weights", weights)
-    ("bias", bias)
+    (alpha)
+    (beta)
+    (trans_a)
+    (trans_b)
+    (weights)
+    (bias)
   )
 } GemmLayerParameter;
 
@@ -44,7 +44,7 @@ private:
 private:
   GemmLayerParameter param_;
   DEFINE_SERIALIZE_MEMBER(
-    ("param_", &param_)
+    (&param_)
   )
 };
 

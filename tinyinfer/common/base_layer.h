@@ -1,7 +1,7 @@
 #pragma once
 
 #include "tinyinfer/common/tensor.h"
-#include "tinyinfer/layer/layer_type.h"
+#include "tinyinfer/common/layer_type.h"
 #include <vector>
 #include <ostream>
 #include "tinyinfer/reflection/serialize_macro.h"
@@ -78,10 +78,10 @@ protected:
   LayerType layer_type_ = LAYER_NONE;
 
   DEFINE_SERIALIZE_MEMBER(
-    ("layer_type", layer_type_)
-    ("layer_name", layer_name_)
-    ("input_names", input_names_)
-    ("output_names", output_names_)
+    (layer_type_)
+    (layer_name_)
+    (input_names_)
+    (output_names_)
   )
 };
 

@@ -32,7 +32,7 @@ private:
 private:
   MatmulLayerParameter param_;
   DEFINE_SERIALIZE_MEMBER(
-    ("param_", &param_)
+    (&param_)
   )
 };
 

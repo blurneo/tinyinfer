@@ -10,7 +10,7 @@ namespace ti {
 typedef struct AddLayerParameter : public BaseLayerParameter {
   std::shared_ptr<Tensor> weights;
   DEFINE_SERIALIZE_MEMBER(
-    ("weights", weights)
+    (weights)
   )
 } AddLayerParameter;
 
@@ -34,7 +34,7 @@ private:
 private:
   AddLayerParameter param_;
   DEFINE_SERIALIZE_MEMBER(
-    ("param_", &param_)
+    (&param_)
   )
 };
 

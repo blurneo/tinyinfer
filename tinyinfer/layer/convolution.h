@@ -26,20 +26,20 @@ typedef struct ConvolutionLayerParam : public BaseLayerParameter {
   std::shared_ptr<Tensor> weights;
   std::shared_ptr<Tensor> bias;
   DEFINE_SERIALIZE_MEMBER(
-    ("kshapex", kernel_shape_x)
-    ("kshapey", kernel_shape_y)
-    ("stridex", stride_x)
-    ("stridey", stride_y)
-    ("padt", pad_t)
-    ("padd", pad_d)
-    ("padl", pad_l)
-    ("padr", pad_r)
-    ("group", group)
-    ("dilatx", dilation_x)
-    ("dilaty", dilation_y)
-    ("padtype", pad_type)
-    ("weights", weights)
-    ("bias", bias)
+    (kernel_shape_x)
+    (kernel_shape_y)
+    (stride_x)
+    (stride_y)
+    (pad_t)
+    (pad_d)
+    (pad_l)
+    (pad_r)
+    (group)
+    (dilation_x)
+    (dilation_y)
+    (pad_type)
+    (weights)
+    (bias)
   )
 } ConvolutionLayerParameter;
 
@@ -64,7 +64,7 @@ private:
 private:
   ConvolutionLayerParameter param_;
   DEFINE_SERIALIZE_MEMBER(
-    ("param_", &param_)
+    (&param_)
   )
 };
 

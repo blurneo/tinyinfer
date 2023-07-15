@@ -6,7 +6,7 @@
 #include <fstream>
 #include "tinyinfer/common/check_macro.h"
 #include "tinyinfer/common/base_layer.h"
-#include "tinyinfer/layer/layer_factory.h"
+#include "tinyinfer/common/layer_factory.h"
 
 namespace ti {
 
@@ -66,7 +66,7 @@ class Deserializer {
         return layer;
     }
     template<typename T>
-    Deserializer& operator()(std::string field_name, T&& member) {
+    Deserializer& operator()(T&& member) {
         if (!this->read(member)) {
             std::cerr << "err read member\n";
         }
