@@ -18,7 +18,11 @@ bool Flatten::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
         param_.axis < 0 ? param_.axis + input_tensor->dims() : param_.axis;
     CHECK_BOOL_RET(axis_idx < input_tensor->dims(), true,
                    "Flatten axis idx exceed the dims");
-    return kernel(input_tensor, axis_idx, output_tensor);
+    CHECK_BOOL_RET(kernel(input_tensor, axis_idx, output_tensor), true, "flatten kernel executes failed");
+    // calculate computation and memory infomation
+    flops_ = 0;
+    bytes_ = input_tensor->get_bytes() + output_tensor->get_bytes();
+    return true;
   }
 
 bool Flatten::kernel(std::shared_ptr<Tensor> input_tensor, int axis_idx,

@@ -50,6 +50,11 @@ bool Add::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
     CHECK_BOOL_RET(compatible, true,
                    "Add input tensor not compatible with weights");
     output_tensor->reshape(broadcast_shapes);
+    // calculate computation and memory infomation
+    flops_ = output_tensor->get_count();
+    bytes_ = input_tensor->get_bytes() +
+          param_.weights->get_bytes() +
+          output_tensor->get_bytes();
     return kernel(input_tensor, output_tensor);
 }
 

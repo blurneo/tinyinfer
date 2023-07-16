@@ -15,6 +15,9 @@ bool Relu::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
     std::shared_ptr<Tensor> input_tensor = input_tensors[0];
     std::shared_ptr<Tensor> output_tensor = output_tensors[0];
     output_tensor->reshape_like(input_tensor);
+    // calculate computation and memory infomation
+    flops_ = 0;
+    bytes_ = input_tensor->get_bytes() + output_tensor->get_bytes();
     return kernel(input_tensor, output_tensor);
 }
 

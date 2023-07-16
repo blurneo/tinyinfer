@@ -70,6 +70,10 @@ public:
   }
   virtual void serialize(Serializer& serializer);
   virtual bool deserialize(Deserializer& deserializer);
+  // should be called after forward or after the input shape is predefined
+  virtual uint64_t calc_computation_flops() { return flops_; }
+  // should be called after forward or after the input shape is predefined
+  virtual uint64_t calc_memory_bytes() { return bytes_; }
 
 protected:
   std::string layer_name_;
@@ -83,6 +87,7 @@ protected:
     (input_names_)
     (output_names_)
   )
+  uint64_t flops_ = 0, bytes_ = 0;
 };
 
 } // namespace ti

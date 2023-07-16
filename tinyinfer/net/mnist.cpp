@@ -261,7 +261,7 @@ void register_12(ti::Net &mnist_net) {
   mnist_net.register_layer(layer_name, layer);
 }
 
-#define IS_SERIALIZE 0
+#define IS_SERIALIZE 1
 
 int main() {
   ti::Net mnist_net;
@@ -310,5 +310,8 @@ int main() {
     std::cout << val << ", ";
   }
   std::cout << "\n";
+  std::cout << "Mnist calculation information:\n";
+  std::cout << "Flops in MFlops: " << mnist_net.calc_computation_flops() / 1024.f / 1024.f << "\n"
+            << "Memory access in MB: " << mnist_net.calc_memory_bytes() / 1024.f / 1024.f << "\n";
   return 0;
 }

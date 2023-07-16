@@ -27,7 +27,9 @@ bool MaxPool::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
                 1;
     output_tensor->reshape(input_tensor->get_n(), input_tensor->get_c(), out_h,
                            out_w);
-
+    // calculate computation and memory infomation
+    flops_ = 0;
+    bytes_ = input_tensor->get_bytes() + output_tensor->get_bytes();
     return kernel(input_tensor, output_tensor);
 }
 

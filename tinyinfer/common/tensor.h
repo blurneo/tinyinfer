@@ -27,6 +27,7 @@ public:
   void set_name(std::string name);
   std::string get_name() const;
   int get_count() const;
+  int get_bytes() const;
   int get_n() const;
   int get_c() const;
   int get_h() const;

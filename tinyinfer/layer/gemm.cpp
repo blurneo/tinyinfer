@@ -27,6 +27,9 @@ bool Gemm::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
     int out_w = B_W;
     output_tensor->reshape(0, 0, out_h, out_w);
     CHECK_BOOL_RET(param_.bias->can_uni_broadcast(output_tensor), true, "Gemm bias shape not match with matmul result")
+    // calculate computation and memory infomation
+    flops_ = input_tensor->get_h() * input_tensor->get_w() * output_tensor->get_w();
+    bytes_ = input_tensor->get_bytes() + param_.weights->get_bytes() + output_tensor->get_bytes();
     return kernel(input_tensors[0], param_.weights, output_tensor);
 }
 

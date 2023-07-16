@@ -14,6 +14,7 @@ void Tensor::set_name(std::string name) { name_ = name; }
 
 std::string Tensor::get_name() const { return name_; }
 int Tensor::get_count() const { return values_.size(); }
+int Tensor::get_bytes() const { return values_.size() * sizeof(float); }
 int Tensor::get_n() const { return n_; }
 int Tensor::get_c() const { return c_; }
 int Tensor::get_h() const { return h_; }

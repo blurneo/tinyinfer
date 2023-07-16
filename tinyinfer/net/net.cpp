@@ -51,6 +51,9 @@ bool Net::forward(std::shared_ptr<Tensor> input,
     bool ret = layer->forward(input_tensors, output_tensors);
     CHECK_BOOL_RET(ret, true,
                    "Layer :" << layer->get_layer_name() << " forward failed\n");
+    // calculation information
+    net_flops_ += layer->calc_computation_flops();
+    net_mem_bytes_ += layer->calc_memory_bytes();
   }
   output = output_tensors[0];
   return true;

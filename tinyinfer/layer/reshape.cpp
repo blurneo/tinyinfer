@@ -33,7 +33,11 @@ bool Reshape::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
     }
     CHECK_BOOL_RET(count == input_tensor->get_count(), true,
                    "Reshape layer input count not same with param");
-    return kernel(input_tensor, output_tensor);
+    CHECK_BOOL_RET(kernel(input_tensor, output_tensor), true, "reshape kernel executes failed");
+    // calculate computation and memory infomation
+    flops_ = 0;
+    bytes_ = input_tensor->get_bytes() + output_tensor->get_bytes();
+    return true;
 }
 
 bool Reshape::kernel(std::shared_ptr<Tensor> input_tensor,

@@ -24,6 +24,8 @@ public:
   bool forward(std::shared_ptr<Tensor> input, std::shared_ptr<Tensor> &output);
   bool serialize(std::string file_path);
   bool deserialize(std::string file_path);
+  uint64_t calc_computation_flops() { return net_flops_; }
+  uint64_t calc_memory_bytes() { return net_mem_bytes_; }
   friend Graph;
 
 private:
@@ -33,6 +35,7 @@ private:
   std::string input_name_;
   std::shared_ptr<Serializer> serializer_;
   std::shared_ptr<Deserializer> deserializer_;
+  uint64_t net_flops_ = 0, net_mem_bytes_ = 0;
 };
 
 } // namespace ti
