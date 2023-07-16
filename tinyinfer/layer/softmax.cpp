@@ -28,18 +28,19 @@ bool Softmax::kernel(std::shared_ptr<Tensor> input_tensor,
     CHECK_BOOL_RET(stride.has_value(), true,
                    "Softmax calculate stride failed\n");
     int dim_from_idx = input_dims_vec[axis_idx];
-    int idx = 0;
-    while (idx < output_values.size()) {
+    int sidx = 0;
+    while (sidx < output_values.size()) {
       float sum = 0.f;
       for (int i = 0; i < dim_from_idx; i++) {
-        int idx = i * stride.value();
+        int idx = sidx + i * stride.value();
         output_values[idx] = std::exp(input_values[idx]);
         sum += output_values[idx];
       }
       for (int i = 0; i < dim_from_idx; i++) {
-        int idx = i * stride.value();
+        int idx = sidx + i * stride.value();
         output_values[idx] = output_values[idx] / sum;
       }
+      sidx += (dim_from_idx * stride.value());
     }
 
     return true;
