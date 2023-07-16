@@ -49,8 +49,18 @@ bool Convolution::forward(const std::vector<std::shared_ptr<Tensor>> &input_tens
     CHECK_BOOL_RET(
         input_tensors[0]->get_c() == param_.weights->get_c(), true,
         "Convolution input tensor channel should be equal shape with weight")
-    // CHECK_BOOL_RET(param_.weights->get_n() == param_.bias->get_n(), true,
-    //     "Convolution weights n should be equal with bias n")
+    if (param_.group != 1) {
+      CHECK_BOOL_RET(
+          input_tensors[0]->get_c() == param_.weights->get_c() * param_.group, true,
+          "Convolution input tensor channel should be group * kernel channel")
+      CHECK_BOOL_RET(
+          param_.weights->get_n() % param_.group == 0, true,
+          "Convolution kernels number should be divisble by group number")
+    }
+    if (param_.bias->get_count() != 0) {
+      CHECK_BOOL_RET(param_.weights->get_n() == param_.bias->get_count(), true,
+          "Convolution weights n should be equal with bias n")
+    }
     const std::shared_ptr<Tensor> &input_tensor = input_tensors[0];
     std::shared_ptr<Tensor> output_tensor = output_tensors[0];
     std::shared_ptr<Tensor> padded_input_tensor = input_tensor;
@@ -99,48 +109,58 @@ bool Convolution::kernel(const std::shared_ptr<Tensor> &input_tensor,
     int IN_T_H = input_tensor->get_h();
     int IN_T_W = input_tensor->get_w();
     const std::vector<float> &input_vals = input_tensor->get_values();
+    int IN_T_C_DIV_GRP = input_tensor->get_c() / param_.group;
     int OUT_T_N = output_tensor->get_n();
     int OUT_T_C = output_tensor->get_c();
     int OUT_T_H = output_tensor->get_h();
     int OUT_T_W = output_tensor->get_w();
     std::vector<float> &output_vals = output_tensor->get_values();
-    int kshape_x = param_.kernel_shape_x, kshape_y = param_.kernel_shape_y;
+    // int kshape_x = param_.kernel_shape_x, kshape_y = param_.kernel_shape_y;
     int stride_x = param_.stride_x, stride_y = param_.stride_x;
     // int pad_l = param_.pad_l, pad_r = param_.pad_r, pad_t = param_.pad_t,
     // pad_d = param_.pad_d;
+    int KERNEL_N = param_.weights->get_n();
+    int KERNEL_C = param_.weights->get_c();
+    int KERNEL_H = param_.weights->get_h();
+    int KERNEL_W = param_.weights->get_w();
+    int KERNEL_N_DIV_GRP = KERNEL_N / param_.group;
     int group = param_.group;
     std::vector<float> &weight_vals = param_.weights->get_values();
-    int weight_n = param_.weights->get_n();
+    // int weight_n = param_.weights->get_n();
     std::vector<float> &bias_vals = param_.bias->get_values();
     bool do_bias = true;
     if (bias_vals.empty())
       do_bias = false;
     // implementation
-    for (int oc = 0; oc < weight_n; oc++) {
-      // int idx0 = in_n * IN_T_C * IN_T_H * IN_T_W;
-      float bias_val = 0;
-      if (do_bias)
-        bias_val = bias_vals[oc];
-      for (int in_h = 0, oh = 0; oh < OUT_T_H; in_h += stride_y, oh++) {
-        int idx1 = in_h * IN_T_W;
-        for (int in_w = 0, ow = 0; ow < OUT_T_W; in_w += stride_x, ow++) {
-          int idx2 = idx1 + in_w;
-          float res = 0;
-          for (int in_c = 0; in_c < IN_T_C; in_c++) {
-            int idx3 = in_c * (IN_T_H * IN_T_W) + idx2;
-            for (int h = 0; h < kshape_y; h++) {
-              for (int w = 0; w < kshape_x; w++) {
-                int t_idx = idx3 + h * IN_T_W + w;
-                int w_idx = oc * IN_T_C * kshape_y * kshape_x +
-                            in_c * kshape_y * kshape_x + h * kshape_x + w;
-                res += input_vals[t_idx] * weight_vals[w_idx];
+    for (int gidx = 0; gidx < param_.group; gidx++) {
+      for (int k_n_ = 0; k_n_ < KERNEL_N_DIV_GRP; k_n_++) {
+        int k_n = k_n_ + gidx * KERNEL_N_DIV_GRP;
+        // int idx0 = in_n * IN_T_C * IN_T_H * IN_T_W;
+        float bias_val = 0;
+        if (do_bias)
+          bias_val = bias_vals[k_n];
+        for (int in_h = 0, oh = 0; oh < OUT_T_H; in_h += stride_y, oh++) {
+          int idx1 = in_h * IN_T_W;
+          for (int in_w = 0, ow = 0; ow < OUT_T_W; in_w += stride_x, ow++) {
+            int idx2 = idx1 + in_w;
+            float res = 0;
+            for (int k_c = 0; k_c < KERNEL_C; k_c++) {
+              int in_c = k_c + gidx * IN_T_C_DIV_GRP;
+              int idx3 = in_c * (IN_T_H * IN_T_W) + idx2;
+              for (int h = 0; h < KERNEL_H; h++) {
+                for (int w = 0; w < KERNEL_W; w++) {
+                  int t_idx = idx3 + h * IN_T_W + w;
+                  int w_idx = k_n * KERNEL_C * KERNEL_H * KERNEL_W +
+                              k_c * KERNEL_H * KERNEL_W + h * KERNEL_W + w;
+                  res += input_vals[t_idx] * weight_vals[w_idx];
+                }
               }
             }
+            if (do_bias)
+              res -= bias_val;
+            int o_idx = k_n * OUT_T_H * OUT_T_W + oh * OUT_T_W + ow;
+            output_vals[o_idx] = res;
           }
-          if (do_bias)
-            res -= bias_val;
-          int o_idx = oc * OUT_T_H * OUT_T_W + oh * OUT_T_W + ow;
-          output_vals[o_idx] = res;
         }
       }
     }
