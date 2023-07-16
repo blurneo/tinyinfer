@@ -20,7 +20,7 @@ bool Matmul::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
     output_tensor->reshape(0, 0, input_tensors[0]->get_h(),
                            input_tensors[1]->get_w());
     // calculate computation and memory infomation
-    flops_ = input_tensors[0]->get_h() * input_tensors[0]->get_w() * output_tensor->get_w();
+    flops_ = 2 * input_tensors[0]->get_h() * input_tensors[0]->get_w() * output_tensor->get_w();
     bytes_ = input_tensors[0]->get_bytes() + input_tensors[1]->get_bytes() + output_tensor->get_bytes();
     return kernel(input_tensors[0], input_tensors[1], output_tensor);
 }

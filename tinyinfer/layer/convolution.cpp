@@ -84,7 +84,7 @@ bool Convolution::forward(const std::vector<std::shared_ptr<Tensor>> &input_tens
     output_tensor->reshape(1, param_.weights->get_n(), out_h, out_w);
 
     // calculate computation and memory infomation
-    flops_ = output_tensor->get_h() * output_tensor->get_w() * param_.weights->get_count();
+    flops_ = 2 * output_tensor->get_h() * output_tensor->get_w() * param_.weights->get_count();
     bytes_ = input_tensor->get_bytes() + param_.weights->get_bytes() + param_.bias->get_bytes() + output_tensor->get_bytes();
     return kernel(padded_input_tensor, output_tensor);
     // return true;

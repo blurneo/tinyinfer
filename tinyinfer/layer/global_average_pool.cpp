@@ -14,7 +14,9 @@ bool GlobalAveragePool::forward(const std::vector<std::shared_ptr<Tensor>> &inpu
     const std::shared_ptr<Tensor> &input_tensor = input_tensors[0];
     std::shared_ptr<Tensor> output_tensor = output_tensors[0];
     output_tensor->reshape(input_tensor->get_n(), input_tensor->get_c(), 1, 1);
-
+    // calculate computation and memory infomation
+    flops_ = input_tensor->get_count();
+    bytes_ = input_tensor->get_bytes() + output_tensor->get_bytes();
     return kernel(input_tensor, output_tensor);
 }
 

@@ -14,6 +14,9 @@ namespace ti {
     std::shared_ptr<Tensor> input_tensor = input_tensors[0];
     std::shared_ptr<Tensor> output_tensor = output_tensors[0];
     output_tensor->reshape_like(input_tensor);
+    // calculate computation and memory infomation
+    flops_ = 2 * input_tensors[0]->get_count() * 10;  // assume exp() costs 10 flops
+    bytes_ = input_tensors[0]->get_bytes() + input_tensors[1]->get_bytes() + output_tensor->get_bytes();
     return kernel(input_tensor, output_tensor);
 }
 
