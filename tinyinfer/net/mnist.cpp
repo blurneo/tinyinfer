@@ -287,9 +287,9 @@ int main() {
 #if IS_SERIALIZE
   mnist_net.prepare_graph();
   mnist_net.prepare_tensors();
-  mnist_net.serialize(project_root_dir + "net.txt");
+  mnist_net.serialize(project_root_dir + "mnist-8.ti");
 #else
-  mnist_net.deserialize(project_root_dir + "net.txt");
+  mnist_net.deserialize(project_root_dir + "mnist-8.ti");
 #endif
   std::shared_ptr<ti::Tensor> net_output;
   int warup_cnt = 3, count = 10;
