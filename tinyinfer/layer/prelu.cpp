@@ -37,9 +37,9 @@ bool PRelu::kernel(std::shared_ptr<Tensor> input_tensor,
     int SLOPE_T_W = param_.slope->get_w();
     std::vector<float> &slope_vals = param_.slope->get_values();
     int SLOPE_LOOP_N = SLOPE_T_N == 0 ? 1 : SLOPE_T_N;
-    int SLOPE_LOOP_N = SLOPE_T_C == 0 ? 1 : SLOPE_T_C;
-    int SLOPE_LOOP_N = SLOPE_T_H == 0 ? 1 : SLOPE_T_H;
-    int SLOPE_LOOP_N = SLOPE_T_W == 0 ? 1 : SLOPE_T_W;
+    int SLOPE_LOOP_C = SLOPE_T_C == 0 ? 1 : SLOPE_T_C;
+    int SLOPE_LOOP_H = SLOPE_T_H == 0 ? 1 : SLOPE_T_H;
+    int SLOPE_LOOP_W = SLOPE_T_W == 0 ? 1 : SLOPE_T_W;
     int OUT_T_N = output_tensor->get_n();
     int OUT_T_C = output_tensor->get_c();
     int OUT_T_H = output_tensor->get_h();

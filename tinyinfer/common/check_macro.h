@@ -20,6 +20,22 @@
     return ret;                                                                \
   }
 
+#define CHECK_VEC_EQUAL_RET(x, y, ret, str)                                    \
+  {\
+    if (x.size() != y.size()) { \
+      std::cerr << "CHECK Vec Equal Size not matched Failed: " << str << "\n"; \
+      return ret;                                      \
+    } \
+    int cnt = x.size();\
+    for (int i = 0; i < cnt; i++) { \
+      if ((x[i] - y[i]) > 0.0000001) {                                          \
+        std::cerr << "CHECK Vec Equal Ret Failed at: " << i << ", " << str << "\n";                      \
+        return ret;                                                                \
+      }\
+    } \
+  }
+
+
 #define __TIC__(mark)                                                          \
   auto begin_##mark = std::chrono::high_resolution_clock::now();
 

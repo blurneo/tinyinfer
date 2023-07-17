@@ -8,6 +8,9 @@ namespace ti {
 
 typedef struct PReluLayerParam : public BaseLayerParameter {
   std::shared_ptr<Tensor> slope;
+  DEFINE_SERIALIZE_MEMBER(
+    (slope)
+  )
 } PReluLayerParameter;
 
 class Serializer;
