@@ -7,6 +7,7 @@ namespace ti {
 // Matrix A: MxK
 // Matrix B: KxN
 // Matrix C: MxN
+// matmul using block and pack methods
 void matmul_pp_block_pack(int M, int K, int N, const std::vector<float> &A,
                     const std::vector<float> &B, std::vector<float> &C) {
     const int OUT_COUNT = M * N;
