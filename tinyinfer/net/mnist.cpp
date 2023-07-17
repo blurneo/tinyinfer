@@ -16,9 +16,9 @@
 #include "tools/numpy_tensor.h"
 #include <iostream>
 
-const std::string project_root_dir = "/Users/ssc/Desktop/TinyInfer/";
-// const std::string project_root_dir =
-// "/Users/ssc/Desktop/workspace/git_repos/tinyinfer/";
+//const std::string project_root_dir = "/Users/ssc/Desktop/TinyInfer/";
+ const std::string project_root_dir =
+ "/Users/ssc/Desktop/workspace/git_repos/tinyinfer/";
 
 bool init_conv_weight(std::string layer_name, std::string weight_file,
                       std::string bias_file,
