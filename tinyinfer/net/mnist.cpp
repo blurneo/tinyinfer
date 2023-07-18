@@ -17,27 +17,32 @@
 #include <iostream>
 
 //const std::string project_root_dir = "/Users/ssc/Desktop/TinyInfer/";
- const std::string project_root_dir =
- "/Users/ssc/Desktop/workspace/git_repos/tinyinfer/";
+const std::string project_root_dir =
+    "/Users/ssc/Desktop/workspace/git_repos/tinyinfer/";
 
 bool init_conv_weight(std::string layer_name, std::string weight_file,
                       std::string bias_file,
-                      ti::ConvolutionLayerParameter &param) {
+                      ti::ConvolutionLayerParameter &param)
+{
   std::shared_ptr<ti::Tensor> weight =
       ti::NumpyTensor<float>::FromFile(weight_file);
   param.weights = weight;
-  if (!bias_file.empty()) {
+  if (!bias_file.empty())
+  {
     std::shared_ptr<ti::Tensor> bias =
         ti::NumpyTensor<float>::FromFile(bias_file);
     param.bias = bias;
-  } else {
+  }
+  else
+  {
     param.bias.reset(new ti::Tensor());
   }
   return true;
 }
 
 bool init_add_weight(std::string layer_name, std::string weight_file,
-                     ti::AddLayerParameter &param) {
+                     ti::AddLayerParameter &param)
+{
   std::shared_ptr<ti::Tensor> weight =
       ti::NumpyTensor<float>::FromFile(weight_file);
   param.weights = weight;
@@ -46,28 +51,35 @@ bool init_add_weight(std::string layer_name, std::string weight_file,
 
 bool init_reshape_weight(std::string layer_name, std::string data_file,
                          std::string shape_file,
-                         ti::ReshapeLayerParameter &param) {
-  if (!data_file.empty()) {
+                         ti::ReshapeLayerParameter &param)
+{
+  if (!data_file.empty())
+  {
     std::shared_ptr<ti::Tensor> data =
         ti::NumpyTensor<float>::FromFile(data_file);
     param.data = data;
-  } else {
+  }
+  else
+  {
     param.data.reset(new ti::Tensor());
   }
-  if (!shape_file.empty()) {
+  if (!shape_file.empty())
+  {
     std::vector<unsigned long> shape;
     bool fortran_order;
     std::vector<int64_t> data;
     ::npy::LoadArrayFromNumpy<int64_t>(std::string(shape_file), shape,
                                        fortran_order, data);
-    for (auto d : data) {
+    for (auto d : data)
+    {
       param.shape.push_back(d);
     }
   }
   return true;
 }
 
-void register_1(ti::Net &mnist_net) {
+void register_1(ti::Net &mnist_net)
+{
   std::string layer_name = "Convolution28";
   std::string weight_file = project_root_dir + "/models/mnist/Parameter5.npy";
   std::shared_ptr<ti::Convolution> layer;
@@ -93,7 +105,8 @@ void register_1(ti::Net &mnist_net) {
   mnist_net.register_layer(layer_name, layer);
 }
 
-void register_2(ti::Net &mnist_net) {
+void register_2(ti::Net &mnist_net)
+{
   std::string layer_name = "Plus30";
   std::string weight_file = project_root_dir + "/models/mnist/Parameter6.npy";
   std::shared_ptr<ti::Add> layer;
@@ -106,7 +119,8 @@ void register_2(ti::Net &mnist_net) {
   mnist_net.register_layer(layer_name, layer);
 }
 
-void register_3(ti::Net &mnist_net) {
+void register_3(ti::Net &mnist_net)
+{
   std::string layer_name = "ReLU32";
   std::shared_ptr<ti::Relu> layer;
   ti::ReluLayerParameter param;
@@ -117,7 +131,8 @@ void register_3(ti::Net &mnist_net) {
   mnist_net.register_layer(layer_name, layer);
 }
 
-void register_4(ti::Net &mnist_net) {
+void register_4(ti::Net &mnist_net)
+{
   std::string layer_name = "Pooling66";
   std::shared_ptr<ti::MaxPool> layer;
   ti::MaxPoolLayerParameter param = {
@@ -125,10 +140,10 @@ void register_4(ti::Net &mnist_net) {
       .kernel_shape_y = 2,
       .stride_x = 2,
       .stride_y = 2,
-      .pad_l = 0,
-      .pad_r = 0,
       .pad_t = 0,
       .pad_d = 0,
+      .pad_l = 0,
+      .pad_r = 0,
   };
   layer.reset(new ti::MaxPool(std::move(param)));
   layer->set_layer_name(layer_name);
@@ -137,7 +152,8 @@ void register_4(ti::Net &mnist_net) {
   mnist_net.register_layer(layer_name, layer);
 }
 
-void register_5(ti::Net &mnist_net) {
+void register_5(ti::Net &mnist_net)
+{
   std::string layer_name = "Convolution110";
   std::string weight_file = project_root_dir + "/models/mnist/Parameter87.npy";
   std::shared_ptr<ti::Convolution> layer;
@@ -163,7 +179,8 @@ void register_5(ti::Net &mnist_net) {
   mnist_net.register_layer(layer_name, layer);
 }
 
-void register_6(ti::Net &mnist_net) {
+void register_6(ti::Net &mnist_net)
+{
   std::string layer_name = "Plus112";
   std::string weight_file = project_root_dir + "/models/mnist/Parameter88.npy";
   std::shared_ptr<ti::Add> layer;
@@ -176,7 +193,8 @@ void register_6(ti::Net &mnist_net) {
   mnist_net.register_layer(layer_name, layer);
 }
 
-void register_7(ti::Net &mnist_net) {
+void register_7(ti::Net &mnist_net)
+{
   std::string layer_name = "ReLU114";
   std::shared_ptr<ti::Relu> layer;
   ti::ReluLayerParameter param;
@@ -187,7 +205,8 @@ void register_7(ti::Net &mnist_net) {
   mnist_net.register_layer(layer_name, layer);
 }
 
-void register_8(ti::Net &mnist_net) {
+void register_8(ti::Net &mnist_net)
+{
   std::string layer_name = "Pooling160";
   std::shared_ptr<ti::MaxPool> layer;
   ti::MaxPoolLayerParameter param = {
@@ -195,10 +214,10 @@ void register_8(ti::Net &mnist_net) {
       .kernel_shape_y = 3,
       .stride_x = 3,
       .stride_y = 3,
-      .pad_l = 0,
-      .pad_r = 0,
       .pad_t = 0,
       .pad_d = 0,
+      .pad_l = 0,
+      .pad_r = 0,
   };
   layer.reset(new ti::MaxPool(std::move(param)));
   layer->set_layer_name(layer_name);
@@ -207,7 +226,8 @@ void register_8(ti::Net &mnist_net) {
   mnist_net.register_layer(layer_name, layer);
 }
 
-void register_9(ti::Net &mnist_net) {
+void register_9(ti::Net &mnist_net)
+{
   std::string layer_name = "Times212_reshape0";
   std::string shape_file =
       project_root_dir + "/models/mnist/Pooling160_Output_0_reshape0_shape.npy";
@@ -221,7 +241,8 @@ void register_9(ti::Net &mnist_net) {
   mnist_net.register_layer(layer_name, layer);
 }
 
-void register_10(ti::Net &mnist_net) {
+void register_10(ti::Net &mnist_net)
+{
   std::string layer_name = "Times212_reshape1";
   std::string data_file = project_root_dir + "/models/mnist/Parameter193.npy";
   std::string shape_file =
@@ -236,7 +257,8 @@ void register_10(ti::Net &mnist_net) {
   mnist_net.register_layer(layer_name, layer);
 }
 
-void register_11(ti::Net &mnist_net) {
+void register_11(ti::Net &mnist_net)
+{
   std::string layer_name = "Times212";
   std::shared_ptr<ti::Matmul> layer;
   ti::MatmulLayerParameter param;
@@ -248,7 +270,8 @@ void register_11(ti::Net &mnist_net) {
   mnist_net.register_layer(layer_name, layer);
 }
 
-void register_12(ti::Net &mnist_net) {
+void register_12(ti::Net &mnist_net)
+{
   std::string layer_name = "Plus214";
   std::string weight_file = project_root_dir + "/models/mnist/Parameter194.npy";
   std::shared_ptr<ti::Add> layer;
@@ -263,7 +286,8 @@ void register_12(ti::Net &mnist_net) {
 
 #define IS_SERIALIZE 1
 
-int main() {
+int main()
+{
   ti::Net mnist_net;
 #if IS_SERIALIZE
   register_1(mnist_net);
@@ -293,12 +317,14 @@ int main() {
 #endif
   std::shared_ptr<ti::Tensor> net_output;
   int warup_cnt = 3, count = 10;
-  for (int i = 0; i < warup_cnt; i++) {
+  for (int i = 0; i < warup_cnt; i++)
+  {
     bool ret = mnist_net.forward(net_input, net_output);
     std::cout << "Mnist forward warm up :" << i << ", return : " << ret << "\n";
   }
   __TIC__(MnistForward)
-  for (int i = 0; i < count; i++) {
+  for (int i = 0; i < count; i++)
+  {
     bool ret = mnist_net.forward(net_input, net_output);
     std::cout << "Mnist forward: " << i << ", return : " << ret << "\n";
   }
@@ -306,7 +332,8 @@ int main() {
   std::cout << "MnistForward average time measured:"
             << __TIME_IN_MS__(MnistForward) / count << " ms\n";
   std::cout << "Net output: ";
-  for (auto val : net_output->get_values()) {
+  for (auto val : net_output->get_values())
+  {
     std::cout << val << ", ";
   }
   std::cout << "\n";

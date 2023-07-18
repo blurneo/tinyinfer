@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.16)
 
 project(TinyInfer)
 
@@ -12,6 +12,8 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/tinyinfer)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3 -msse3 -funroll-loops")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -O0 -g")
 
 file(GLOB_RECURSE srcs
     ${PROJECT_SOURCE_DIR}/tinyinfer/common/*.h
@@ -24,3 +26,5 @@ file(GLOB_RECURSE srcs
 add_library(ti STATIC ${srcs})
 add_executable(mnist_test tinyinfer/net/mnist.cpp)
 target_link_libraries(mnist_test PRIVATE ti)
+
+add_subdirectory(tinyinfer/layer/pp/matmul)
