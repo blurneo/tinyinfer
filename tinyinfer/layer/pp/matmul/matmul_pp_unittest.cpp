@@ -6,17 +6,20 @@
 #include <cstdlib>
 #include <ctime>
 
-void random_vector(std::vector<float> &vec) {
+void random_vector(std::vector<float> &vec)
+{
     std::srand(std::time(0));
-    for (auto& val : vec) {
-        val = (float) (std::rand() / (float)RAND_MAX);
+    for (auto &val : vec)
+    {
+        val = (float)(std::rand() / (float)RAND_MAX);
     }
 }
 
 using namespace ti;
 
-int main() {
-    int M = 64, K = 64, N = 64;
+int main()
+{
+    int M = 2000, K = 2000, N = 2000;
     std::vector<float> A(M * K);
     std::vector<float> B(K * N);
     std::vector<float> C1(M * N);
@@ -24,13 +27,15 @@ int main() {
     random_vector(A);
     random_vector(B);
     __TIC__(REF)
-    for (int i = 0; i < 100; i++) {
-        matmul_ref(M, K, N, A, B, C1);
+    for (int i = 0; i < 1; i++)
+    {
+        matmul_pp_block(M, K, N, A, B, C1);
     }
     __TOC__(REF)
     __TIC__(PP)
-    for (int i = 0; i < 100; i++) {
-        matmul_pp_block_pack(M, K, N, A, B, C2);
+    for (int i = 0; i < 1; i++)
+    {
+        matmul_pp_block4_unroll(M, K, N, A, B, C2);
     }
     __TOC__(PP)
     CHECK_VEC_EQUAL_RET(C1, C2, -1, "C1 C2 not equal");
