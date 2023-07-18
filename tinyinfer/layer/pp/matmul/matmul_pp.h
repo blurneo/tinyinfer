@@ -199,7 +199,7 @@ namespace ti
     void block4_pack_b(int N, int K, const float *b, float *packed_b)
     {
         int loop_N = N / 4 * 4;
-        int loop_K = K / 4 * 4;
+        int loop_K = K;
         for (int n = 0; n < loop_N; n += 4)
         {
             const float *b0_p = b + n;

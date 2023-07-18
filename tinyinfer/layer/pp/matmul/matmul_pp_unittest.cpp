@@ -19,14 +19,21 @@ using namespace ti;
 
 int main()
 {
-    int M = 2000, K = 2000, N = 2000;
+    int M = 201, K = 201, N = 201;
     std::vector<float> A(M * K);
     std::vector<float> B(K * N);
+    std::vector<float> C0(M * N);
     std::vector<float> C1(M * N);
     std::vector<float> C2(M * N);
     std::vector<float> C3(M * N);
     random_vector(A);
     random_vector(B);
+    __TIC__(REF)
+    for (int i = 0; i < 1; i++)
+    {
+        matmul_ref(M, K, N, A, B, C0);
+    }
+    __TOC__(REF)
     __TIC__(PP_BLOCK)
     for (int i = 0; i < 1; i++)
     {
@@ -45,8 +52,9 @@ int main()
         matmul_pp_block4_packb_unroll(M, K, N, A, B, C3);
     }
     __TOC__(PP_BLOCK4_PACKB)
-    CHECK_VEC_EQUAL_RET(C1, C2, -1, "C1 C2 not equal");
-    CHECK_VEC_EQUAL_RET(C1, C3, -1, "C1 C3 not equal");
+    CHECK_VEC_EQUAL_RET(C0, C1, -1, "C0 C1 not equal");
+    CHECK_VEC_EQUAL_RET(C0, C2, -1, "C0 C2 not equal");
+    CHECK_VEC_EQUAL_RET(C0, C3, -1, "C0 C3 not equal");
 
     return 0;
 }
