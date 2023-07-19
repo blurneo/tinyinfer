@@ -19,7 +19,7 @@ using namespace ti;
 
 int main()
 {
-    int M = 201, K = 201, N = 201;
+    int M = 100, K = 320, N = 1280;
     std::vector<float> A(M * K);
     std::vector<float> B(K * N);
     std::vector<float> C0(M * N);

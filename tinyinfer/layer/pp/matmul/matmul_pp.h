@@ -196,26 +196,30 @@ namespace ti
         }
     }
 
-    void block4_pack_b(int N, int K, const float *b, float *packed_b)
+    void block4_pack_b(int K, int N, const float *b, float *packed_b)
     {
         int loop_N = N / 4 * 4;
         int loop_K = K;
+        float *packed0 = packed_b;
+        float *packed1 = packed0 + 1;
+        float *packed2 = packed1 + 1;
+        float *packed3 = packed2 + 1;
         for (int n = 0; n < loop_N; n += 4)
         {
             const float *b0_p = b + n;
             const float *b1_p = b0_p + 1;
             const float *b2_p = b1_p + 1;
             const float *b3_p = b2_p + 1;
-            float *packed0 = packed_b + n * K;
-            float *packed1 = packed0 + K;
-            float *packed2 = packed1 + K;
-            float *packed3 = packed2 + K;
             for (int k = 0; k < loop_K; k++)
             {
-                *packed0++ = *b0_p;
-                *packed1++ = *b1_p;
-                *packed2++ = *b2_p;
-                *packed3++ = *b3_p;
+                *packed0 = *b0_p;
+                *packed1 = *b1_p;
+                *packed2 = *b2_p;
+                *packed3 = *b3_p;
+                packed0 += 4;
+                packed1 += 4;
+                packed2 += 4;
+                packed3 += 4;
                 b0_p += N;
                 b1_p += N;
                 b2_p += N;
@@ -231,9 +235,9 @@ namespace ti
         const float *a2 = a1 + k;
         const float *a3 = a2 + k;
         const float *b0 = b;
-        const float *b1 = b + k;
-        const float *b2 = b1 + k;
-        const float *b3 = b2 + k;
+        const float *b1 = b + 1;
+        const float *b2 = b1 + 1;
+        const float *b3 = b2 + 1;
         register float c00 = 0.f, c01 = 0.f, c02 = 0.f, c03 = 0.f;
         register float c10 = 0.f, c11 = 0.f, c12 = 0.f, c13 = 0.f;
         register float c20 = 0.f, c21 = 0.f, c22 = 0.f, c23 = 0.f;
@@ -269,10 +273,10 @@ namespace ti
             c32 += a3i * b2i;
             c33 += a3i * b3i;
 
-            b0++;
-            b1++;
-            b2++;
-            b3++;
+            b0 += 4;
+            b1 += 4;
+            b2 += 4;
+            b3 += 4;
         }
         c[0] += c00;
         c[1] += c01;
@@ -304,9 +308,9 @@ namespace ti
         int BLOCK_SIZE = 4;
         int BLOCK_NUM_A = M / BLOCK_SIZE;
         int BLOCK_NUM_B = N / BLOCK_SIZE;
-        float *packedb = (float *)malloc(N * K * sizeof(float)); // packed into N row K col
+        float *packedb = (float *)malloc(K * N * sizeof(float)); // packed into K*N/4 row 4 col
         // pack b only once, only pack into block times shape, residuals no need to pack
-        block4_pack_b(N, K, B.data(), packedb);
+        block4_pack_b(K, N, B.data(), packedb);
         // divide all rows into multiple slices
         for (int a_block_idx = 0; a_block_idx < BLOCK_NUM_A; a_block_idx++)
         {
