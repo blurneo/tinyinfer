@@ -26,6 +26,7 @@ int main()
     std::vector<float> C1(M * N);
     std::vector<float> C2(M * N);
     std::vector<float> C3(M * N);
+    std::vector<float> C4(M * N);
     random_vector(A);
     random_vector(B);
     __TIC__(REF)
@@ -52,9 +53,16 @@ int main()
         matmul_pp_block4_packb_unroll(M, K, N, A, B, C3);
     }
     __TOC__(PP_BLOCK4_PACKB)
+    __TIC__(PP_BLOCK4_PACKAB)
+    for (int i = 0; i < 1; i++)
+    {
+        matmul_pp_block4_packab_unroll(M, K, N, A, B, C4);
+    }
+    __TOC__(PP_BLOCK4_PACKAB)
     CHECK_VEC_EQUAL_RET(C0, C1, -1, "C0 C1 not equal");
     CHECK_VEC_EQUAL_RET(C0, C2, -1, "C0 C2 not equal");
     CHECK_VEC_EQUAL_RET(C0, C3, -1, "C0 C3 not equal");
+    CHECK_VEC_EQUAL_RET(C0, C4, -1, "C0 C4 not equal");
 
     return 0;
 }
