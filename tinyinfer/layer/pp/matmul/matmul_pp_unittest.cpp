@@ -19,7 +19,7 @@ using namespace ti;
 
 int main()
 {
-    int M = 100, K = 320, N = 1280;
+    unsigned long M = 100, K = 320, N = 1280;
     float gflop = 2 * M * K * N / 1024.0 / 1024.0 / 1024.0;
     std::vector<float> A(M * K);
     std::vector<float> B(K * N);
@@ -28,6 +28,7 @@ int main()
     std::vector<float> C2(M * N);
     std::vector<float> C3(M * N);
     std::vector<float> C4(M * N);
+    std::vector<float> C5(M * N);
     random_vector(A);
     random_vector(B);
     __TIC__(REF)
@@ -65,10 +66,18 @@ int main()
     }
     __TOC__(PP_BLOCK4_PACKAB)
     std::cout << "GFlops: " << gflop / elapsed_ms_PP_BLOCK4_PACKAB * 1000 << "\n";
+    __TIC__(PP_BLOCK4x8_PACKAB)
+    for (int i = 0; i < 1; i++)
+    {
+        matmul_pp_block4x8_packab_unroll(M, K, N, A, B, C5);
+    }
+    __TOC__(PP_BLOCK4x8_PACKAB)
+    std::cout << "GFlops: " << gflop / elapsed_ms_PP_BLOCK4x8_PACKAB * 1000 << "\n";
     CHECK_VEC_EQUAL_RET(C0, C1, -1, "C0 C1 not equal");
     CHECK_VEC_EQUAL_RET(C0, C2, -1, "C0 C2 not equal");
     CHECK_VEC_EQUAL_RET(C0, C3, -1, "C0 C3 not equal");
     CHECK_VEC_EQUAL_RET(C0, C4, -1, "C0 C4 not equal");
+    CHECK_VEC_EQUAL_RET(C0, C5, -1, "C0 C5 not equal");
 
     return 0;
 }
