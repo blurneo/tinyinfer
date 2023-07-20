@@ -29,6 +29,7 @@ int main()
     std::vector<float> C3(M * N);
     std::vector<float> C4(M * N);
     std::vector<float> C5(M * N);
+    std::vector<float> C6(M * N);
     random_vector(A);
     random_vector(B);
     __TIC__(REF)
@@ -73,11 +74,19 @@ int main()
     }
     __TOC__(PP_BLOCK4x8_PACKAB)
     std::cout << "GFlops: " << gflop / elapsed_ms_PP_BLOCK4x8_PACKAB * 1000 << "\n";
+    __TIC__(PP_BLOCK8x8_PACKAB)
+    for (int i = 0; i < 1; i++)
+    {
+        gemm_pp_block8x8_packab_unroll(M, K, N, A, B, C6);
+    }
+    __TOC__(PP_BLOCK8x8_PACKAB)
+    std::cout << "GFlops: " << gflop / elapsed_ms_PP_BLOCK8x8_PACKAB * 1000 << "\n";
     CHECK_VEC_EQUAL_RET(C0, C1, -1, "C0 C1 not equal");
     CHECK_VEC_EQUAL_RET(C0, C2, -1, "C0 C2 not equal");
     CHECK_VEC_EQUAL_RET(C0, C3, -1, "C0 C3 not equal");
     CHECK_VEC_EQUAL_RET(C0, C4, -1, "C0 C4 not equal");
     CHECK_VEC_EQUAL_RET(C0, C5, -1, "C0 C5 not equal");
+    CHECK_VEC_EQUAL_RET(C0, C6, -1, "C0 C6 not equal");
 
     return 0;
 }
