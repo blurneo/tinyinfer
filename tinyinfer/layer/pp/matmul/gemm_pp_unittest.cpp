@@ -1,5 +1,5 @@
-#include "tinyinfer/layer/pp/matmul/matmul_pp.h"
-#include "tinyinfer/layer/pp/matmul/matmul_ref.h"
+#include "tinyinfer/layer/pp/matmul/gemm_pp.h"
+#include "tinyinfer/layer/pp/matmul/gemm_ref.h"
 #include "tinyinfer/common/check_macro.h"
 
 #include <vector>
@@ -34,42 +34,42 @@ int main()
     __TIC__(REF)
     for (int i = 0; i < 1; i++)
     {
-        matmul_ref(M, K, N, A, B, C0);
+        gemm_ref(M, K, N, A, B, C0);
     }
     __TOC__(REF)
     std::cout << "GFlops: " << gflop / elapsed_ms_REF * 1000 << "\n";
     __TIC__(PP_BLOCK)
     for (int i = 0; i < 1; i++)
     {
-        matmul_pp_block(M, K, N, A, B, C1);
+        gemm_pp_block(M, K, N, A, B, C1);
     }
     __TOC__(PP_BLOCK)
     std::cout << "GFlops: " << gflop / elapsed_ms_PP_BLOCK * 1000 << "\n";
     __TIC__(PP_BLOCK4)
     for (int i = 0; i < 1; i++)
     {
-        matmul_pp_block4_unroll(M, K, N, A, B, C2);
+        gemm_pp_block4_unroll(M, K, N, A, B, C2);
     }
     __TOC__(PP_BLOCK4)
     std::cout << "GFlops: " << gflop / elapsed_ms_PP_BLOCK4 * 1000 << "\n";
     __TIC__(PP_BLOCK4_PACKB)
     for (int i = 0; i < 1; i++)
     {
-        matmul_pp_block4_packb_unroll(M, K, N, A, B, C3);
+        gemm_pp_block4_packb_unroll(M, K, N, A, B, C3);
     }
     __TOC__(PP_BLOCK4_PACKB)
     std::cout << "GFlops: " << gflop / elapsed_ms_PP_BLOCK4_PACKB * 1000 << "\n";
     __TIC__(PP_BLOCK4_PACKAB)
     for (int i = 0; i < 1; i++)
     {
-        matmul_pp_block4_packab_unroll(M, K, N, A, B, C4);
+        gemm_pp_block4_packab_unroll(M, K, N, A, B, C4);
     }
     __TOC__(PP_BLOCK4_PACKAB)
     std::cout << "GFlops: " << gflop / elapsed_ms_PP_BLOCK4_PACKAB * 1000 << "\n";
     __TIC__(PP_BLOCK4x8_PACKAB)
     for (int i = 0; i < 1; i++)
     {
-        matmul_pp_block4x8_packab_unroll(M, K, N, A, B, C5);
+        gemm_pp_block4x8_packab_unroll(M, K, N, A, B, C5);
     }
     __TOC__(PP_BLOCK4x8_PACKAB)
     std::cout << "GFlops: " << gflop / elapsed_ms_PP_BLOCK4x8_PACKAB * 1000 << "\n";

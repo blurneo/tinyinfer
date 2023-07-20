@@ -5,8 +5,8 @@
 namespace ti
 {
 
-  void matmul_ref(int M, int K, int N, const std::vector<float> &A,
-                  const std::vector<float> &B, std::vector<float> &C)
+  void gemm_ref(int M, int K, int N, const std::vector<float> &A,
+                const std::vector<float> &B, std::vector<float> &C)
   {
     for (int h1 = 0; h1 < M; h1++)
     {
