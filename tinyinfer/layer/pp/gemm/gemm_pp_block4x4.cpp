@@ -16,12 +16,12 @@ namespace ti
         const float *b1 = b + 1;
         const float *b2 = b1 + 1;
         const float *b3 = b2 + 1;
-        register float c00 = 0.f, c01 = 0.f, c02 = 0.f, c03 = 0.f;
-        register float c10 = 0.f, c11 = 0.f, c12 = 0.f, c13 = 0.f;
-        register float c20 = 0.f, c21 = 0.f, c22 = 0.f, c23 = 0.f;
-        register float c30 = 0.f, c31 = 0.f, c32 = 0.f, c33 = 0.f;
-        register float a0i, a1i, a2i, a3i;
-        register float b0i, b1i, b2i, b3i;
+        float c00 = 0.f, c01 = 0.f, c02 = 0.f, c03 = 0.f;
+        float c10 = 0.f, c11 = 0.f, c12 = 0.f, c13 = 0.f;
+        float c20 = 0.f, c21 = 0.f, c22 = 0.f, c23 = 0.f;
+        float c30 = 0.f, c31 = 0.f, c32 = 0.f, c33 = 0.f;
+        float a0i, a1i, a2i, a3i;
+        float b0i, b1i, b2i, b3i;
         for (int i = 0; i < k; i++)
         {
             a0i = *a0++;
@@ -171,12 +171,12 @@ namespace ti
         const float *b1 = b + 1;
         const float *b2 = b1 + 1;
         const float *b3 = b2 + 1;
-        register float c00 = 0.f, c01 = 0.f, c02 = 0.f, c03 = 0.f;
-        register float c10 = 0.f, c11 = 0.f, c12 = 0.f, c13 = 0.f;
-        register float c20 = 0.f, c21 = 0.f, c22 = 0.f, c23 = 0.f;
-        register float c30 = 0.f, c31 = 0.f, c32 = 0.f, c33 = 0.f;
-        register float a0i, a1i, a2i, a3i;
-        register float b0i, b1i, b2i, b3i;
+        float c00 = 0.f, c01 = 0.f, c02 = 0.f, c03 = 0.f;
+        float c10 = 0.f, c11 = 0.f, c12 = 0.f, c13 = 0.f;
+        float c20 = 0.f, c21 = 0.f, c22 = 0.f, c23 = 0.f;
+        float c30 = 0.f, c31 = 0.f, c32 = 0.f, c33 = 0.f;
+        float a0i, a1i, a2i, a3i;
+        float b0i, b1i, b2i, b3i;
         for (int i = 0; i < k; i++)
         {
             a0i = *a0++;
@@ -330,12 +330,12 @@ namespace ti
         const float *b1 = b + 1;
         const float *b2 = b1 + 1;
         const float *b3 = b2 + 1;
-        register float c00 = 0.f, c01 = 0.f, c02 = 0.f, c03 = 0.f;
-        register float c10 = 0.f, c11 = 0.f, c12 = 0.f, c13 = 0.f;
-        register float c20 = 0.f, c21 = 0.f, c22 = 0.f, c23 = 0.f;
-        register float c30 = 0.f, c31 = 0.f, c32 = 0.f, c33 = 0.f;
-        register float a0i, a1i, a2i, a3i;
-        register float b0i, b1i, b2i, b3i;
+        float c00 = 0.f, c01 = 0.f, c02 = 0.f, c03 = 0.f;
+        float c10 = 0.f, c11 = 0.f, c12 = 0.f, c13 = 0.f;
+        float c20 = 0.f, c21 = 0.f, c22 = 0.f, c23 = 0.f;
+        float c30 = 0.f, c31 = 0.f, c32 = 0.f, c33 = 0.f;
+        float a0i, a1i, a2i, a3i;
+        float b0i, b1i, b2i, b3i;
         for (int i = 0; i < k; i++)
         {
             a0i = *a0;
