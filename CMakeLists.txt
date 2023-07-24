@@ -20,11 +20,17 @@ file(GLOB_RECURSE srcs
     ${PROJECT_SOURCE_DIR}/tinyinfer/common/*.cpp
     ${PROJECT_SOURCE_DIR}/tinyinfer/layer/*.cpp
     ${PROJECT_SOURCE_DIR}/tinyinfer/layer/*.cpp
+    ${PROJECT_SOURCE_DIR}/tinyinfer/net/*.h
     ${PROJECT_SOURCE_DIR}/tinyinfer/net/*.cpp
-    ${PROJECT_SOURCE_DIR}/tinyinfer/net/*.cpp
+    ${PROJECT_SOURCE_DIR}/tinyinfer/pp/im2col/*.h
+    ${PROJECT_SOURCE_DIR}/tinyinfer/pp/im2col/*.cpp
+    ${PROJECT_SOURCE_DIR}/tinyinfer/pp/gemm/*.h
+    ${PROJECT_SOURCE_DIR}/tinyinfer/pp/gemm/*.cpp
 )
 add_library(ti STATIC ${srcs})
-add_executable(mnist_test tinyinfer/net/mnist.cpp)
-target_link_libraries(mnist_test PRIVATE ti)
 
-add_subdirectory(tinyinfer/layer/pp/matmul)
+add_executable(mnist_unittest tests/mnist_unittest.cpp)
+target_link_libraries(mnist_unittest PRIVATE ti)
+
+add_executable(gemm_pp_unittest tests/gemm_pp_unittest.cpp)
+target_link_libraries(gemm_pp_unittest PRIVATE ti)
