@@ -3,6 +3,8 @@
 #include "tinyinfer/common/check_macro.h"
 #include "tinyinfer/common/tensor.h"
 #include "tinyinfer/common/base_layer.h"
+#include "tinyinfer/layer/pp/im2col/im2col.h"
+#include "tinyinfer/layer/pp/gemm/gemm_pp.h"
 #include "tinyinfer/layer/convolution.h"
 #include <cmath>
 #include <iostream>
@@ -97,8 +99,25 @@ bool Convolution::forward(const std::vector<std::shared_ptr<Tensor>> &input_tens
     flops_ = 2 * output_tensor->get_h() * output_tensor->get_w() * param_.weights->get_count() +
              output_tensor->get_h() * output_tensor->get_w() * param_.bias->get_count();
     bytes_ = input_tensor->get_bytes() + param_.weights->get_bytes() + param_.bias->get_bytes() + output_tensor->get_bytes();
-    return kernel(padded_input_tensor, output_tensor);
+    // return kernel(padded_input_tensor, output_tensor);
+    return kernel_gemm(padded_input_tensor, output_tensor);
     // return true;
+}
+
+bool Convolution::kernel_gemm(const std::shared_ptr<Tensor> &input_tensor,
+              std::shared_ptr<Tensor> output_tensor) {
+    float* mat_a = nullptr, *mat_b = nullptr;
+    bool ret = im2col(input_tensor->get_n(), input_tensor->get_c(), input_tensor->get_h(), input_tensor->get_w(), input_tensor->get_values().data(),
+            param_.weights->get_n(), param_.weights->get_c(), param_.weights->get_h(), param_.weights->get_w(), param_.weights->get_values().data(), param_.bias->get_values().data(),
+            param_.stride_x, param_.stride_y, param_.pad_t, param_.pad_d, param_.pad_l, param_.pad_r,
+            param_.group, param_.dilation_x, param_.dilation_y, param_.pad_type,
+            output_tensor->get_h(), output_tensor->get_w(), &mat_a, &mat_b);
+    CHECK_BOOL_RET(ret, true, "convolution im2col failed")
+    int M = output_tensor->get_h() * output_tensor->get_w();
+    int K = param_.weights->get_c() * param_.weights->get_h() * param_.weights->get_w();
+    int N = param_.weights->get_n();
+    gemm_pp_block4x8_packab_unroll(M, K, N, mat_a, mat_b, output_tensor->get_values().data());
+    return true;
 }
 
 bool Convolution::kernel(const std::shared_ptr<Tensor> &input_tensor,

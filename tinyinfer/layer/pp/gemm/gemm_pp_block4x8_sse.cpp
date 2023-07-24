@@ -115,11 +115,11 @@ namespace ti
     // Matrix B: KxN
     // Matrix C: MxN
     // gemm using block and pack b methods
-    void gemm_pp_block4x8_packab_unroll(int M, int K, int N, const std::vector<float> &A,
-                                        const std::vector<float> &B, std::vector<float> &C)
+    void gemm_pp_block4x8_packab_unroll(int M, int K, int N, const float* A,
+                                        const float* B, float* C)
     {
         const int OUT_COUNT = M * N;
-        C.resize(OUT_COUNT, 0);
+        // C.resize(OUT_COUNT, 0);
         int BLOCK_SIZE_A = 4;
         int BLOCK_SIZE_B = 8;
         int BLOCK_NUM_A = M / BLOCK_SIZE_A;
@@ -127,8 +127,8 @@ namespace ti
         float *packeda = (float *)malloc(M * K * sizeof(float)); // packed into K*N/4 row 4 col
         float *packedb = (float *)malloc(K * N * sizeof(float)); // packed into K*N/4 row 4 col
         // pack b only once, only pack into block times shape, residuals no need to pack
-        block4_pack_a(M, K, A.data(), packeda);
-        block8_pack_b(K, N, B.data(), packedb);
+        block4_pack_a(M, K, A, packeda);
+        block8_pack_b(K, N, B, packedb);
         // divide all rows into multiple slices
         for (int a_block_idx = 0; a_block_idx < BLOCK_NUM_A; a_block_idx++)
         {
@@ -138,7 +138,7 @@ namespace ti
             for (; b_block_idx < BLOCK_NUM_B; b_block_idx++)
             {
                 int b_start_col = b_block_idx * BLOCK_SIZE_B;
-                mul_add_4x8_packedab_simd(M, K, N, packeda + a_start_row * K, packedb + b_start_col * K, C.data() + a_start_row * N + b_start_col);
+                mul_add_4x8_packedab_simd(M, K, N, packeda + a_start_row * K, packedb + b_start_col * K, C + a_start_row * N + b_start_col);
             }
             // process the col residuals
             int b_col = b_block_idx * BLOCK_SIZE_B;

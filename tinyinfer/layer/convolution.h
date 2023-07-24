@@ -60,6 +60,8 @@ public:
 private:
   bool kernel(const std::shared_ptr<Tensor> &input_tensor,
               std::shared_ptr<Tensor> output_tensor);
+  bool kernel_gemm(const std::shared_ptr<Tensor> &input_tensor,
+              std::shared_ptr<Tensor> output_tensor);
 
 private:
   ConvolutionLayerParameter param_;

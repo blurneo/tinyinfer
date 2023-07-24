@@ -1,5 +1,5 @@
-#include "tinyinfer/layer/pp/matmul/gemm_pp.h"
-#include "tinyinfer/layer/pp/matmul/gemm_ref.h"
+#include "tinyinfer/layer/pp/gemm/gemm_pp.h"
+#include "tinyinfer/layer/pp/gemm/gemm_ref.h"
 #include "tinyinfer/common/check_macro.h"
 
 #include <vector>
