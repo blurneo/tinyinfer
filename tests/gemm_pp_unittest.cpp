@@ -35,7 +35,7 @@ int main()
     __TIC__(REF)
     for (int i = 0; i < 1; i++)
     {
-        gemm_ref(M, K, N, A, B, C0);
+        gemm_ref(M, K, N, A.data(), B.data(), C0.data());
     }
     __TOC__(REF)
     std::cout << "GFlops: " << gflop / elapsed_ms_REF * 1000 << "\n";

@@ -315,6 +315,7 @@ int main()
 #else
   mnist_net.deserialize(project_root_dir + "mnist-8.ti");
 #endif
+  mnist_net.enable_profile(true);
   std::shared_ptr<ti::Tensor> net_output;
   int warup_cnt = 3, count = 10;
   for (int i = 0; i < warup_cnt; i++)
@@ -331,6 +332,11 @@ int main()
   __TOC__(MnistForward)
   std::cout << "MnistForward average time measured:"
             << __TIME_IN_MS__(MnistForward) / count << " ms\n";
+  auto layer_profile = mnist_net.get_profile();
+  for (auto profile : layer_profile)
+  {
+    std::cout << "Layer: " << profile.first << " time cost in ms: " << profile.second.time_ms << "\n";
+  }
   std::cout << "Net output: ";
   for (auto val : net_output->get_values())
   {
