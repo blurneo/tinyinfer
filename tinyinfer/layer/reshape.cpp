@@ -8,18 +8,23 @@
 #include "tinyinfer/reflection/serializer.h"
 #include "tinyinfer/reflection/deserializer.h"
 
-namespace ti {
+namespace ti
+{
 
-bool Reshape::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
-               std::vector<std::shared_ptr<Tensor>> output_tensors) {
+  bool Reshape::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
+                        std::vector<std::shared_ptr<Tensor>> output_tensors)
+  {
     // CHECK_BOOL_RET(input_tensors.size(), 1, "Reshape input tensor number
     // should be 1")
     std::shared_ptr<Tensor> input_tensor;
-    if (input_tensors.empty()) {
+    if (input_tensors.empty())
+    {
       CHECK_BOOL_RET(param_.data != nullptr, true,
                      "Reshape input tensor number should be 1")
       input_tensor = param_.data;
-    } else {
+    }
+    else
+    {
       input_tensor = input_tensors[0];
     }
     std::shared_ptr<Tensor> output_tensor = output_tensors[0];
@@ -28,7 +33,8 @@ bool Reshape::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
     CHECK_BOOL_RET(param_.shape.size() <= 4, true,
                    "Reshape layer shape param is too large");
     int count = 1;
-    for (auto val : param_.shape) {
+    for (auto val : param_.shape)
+    {
       count *= val;
     }
     CHECK_BOOL_RET(count == input_tensor->get_count(), true,
@@ -38,12 +44,14 @@ bool Reshape::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
     flops_ = 0;
     bytes_ = input_tensor->get_bytes() + output_tensor->get_bytes();
     return true;
-}
+  }
 
-bool Reshape::kernel(std::shared_ptr<Tensor> input_tensor,
-              std::shared_ptr<Tensor> output_tensor) {
+  bool Reshape::kernel(std::shared_ptr<Tensor> input_tensor,
+                       std::shared_ptr<Tensor> output_tensor)
+  {
     int shape_size = param_.shape.size();
-    switch (shape_size) {
+    switch (shape_size)
+    {
     case 1:
       output_tensor->reshape(0, 0, 0, param_.shape[0]);
       break;
@@ -63,16 +71,18 @@ bool Reshape::kernel(std::shared_ptr<Tensor> input_tensor,
     }
     output_tensor->copy_if_same_count(input_tensor);
     return true;
-}
+  }
 
-void Reshape::serialize(Serializer& serializer) {
+  void Reshape::serialize(Serializer &serializer)
+  {
     BaseLayer::serialize(serializer);
     Reshape::serialize_internal(serializer);
-}
+  }
 
-bool Reshape::deserialize(Deserializer& deserializer) {
+  bool Reshape::deserialize(Deserializer &deserializer)
+  {
     CHECK_BOOL_RET(BaseLayer::deserialize(deserializer), true, "Reshape baselayer deserialize failed");
     return Reshape::deserialize_internal(deserializer);
-}
+  }
 
 } // namespace ti

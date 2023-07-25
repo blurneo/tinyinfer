@@ -5,10 +5,12 @@
 #include "tinyinfer/common/base_layer.h"
 #include "tinyinfer/layer/global_average_pool.h"
 
-namespace ti {
+namespace ti
+{
 
-bool GlobalAveragePool::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
-               std::vector<std::shared_ptr<Tensor>> output_tensors) {
+  bool GlobalAveragePool::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
+                                  std::vector<std::shared_ptr<Tensor>> output_tensors)
+  {
     CHECK_BOOL_RET(input_tensors.size(), 1,
                    "GlobalAveragePool input tensor number should be 1")
     const std::shared_ptr<Tensor> &input_tensor = input_tensors[0];
@@ -18,10 +20,11 @@ bool GlobalAveragePool::forward(const std::vector<std::shared_ptr<Tensor>> &inpu
     flops_ = input_tensor->get_count();
     bytes_ = input_tensor->get_bytes() + output_tensor->get_bytes();
     return kernel(input_tensor, output_tensor);
-}
+  }
 
-bool GlobalAveragePool::kernel(std::shared_ptr<Tensor> input_tensor,
-              std::shared_ptr<Tensor> output_tensor) {
+  bool GlobalAveragePool::kernel(std::shared_ptr<Tensor> input_tensor,
+                                 std::shared_ptr<Tensor> output_tensor)
+  {
     // param def
     int IN_T_N = input_tensor->get_n();
     int IN_T_C = input_tensor->get_c();
@@ -36,16 +39,20 @@ bool GlobalAveragePool::kernel(std::shared_ptr<Tensor> input_tensor,
     int OUT_HxW = OUT_T_H * OUT_T_W;
     float OUT_HxW_RECIP = 1.0 / OUT_HxW;
     // implementation
-    for (int in_n = 0; in_n < IN_T_N; in_n++) {
+    for (int in_n = 0; in_n < IN_T_N; in_n++)
+    {
       int idx0 = in_n * IN_T_C * IN_T_H * IN_T_W;
       int oidx0 = in_n * IN_T_C;
-      for (int in_c = 0; in_c < IN_T_C; in_c++) {
+      for (int in_c = 0; in_c < IN_T_C; in_c++)
+      {
         int idx1 = idx0 + in_c * IN_T_H * IN_T_W;
         int oidx1 = oidx0 + in_c;
         float sum = 0.f;
-        for (int in_h = 0; in_h < IN_T_H; in_h++) {
+        for (int in_h = 0; in_h < IN_T_H; in_h++)
+        {
           int idx2 = idx1 + in_h * IN_T_W;
-          for (int in_w = 0; in_w < IN_T_W; in_w++) {
+          for (int in_w = 0; in_w < IN_T_W; in_w++)
+          {
             int idx3 = idx2 + in_w;
             sum += input_vals[idx3];
           }
@@ -55,6 +62,6 @@ bool GlobalAveragePool::kernel(std::shared_ptr<Tensor> input_tensor,
     }
 
     return true;
-}
+  }
 
 } // namespace ti

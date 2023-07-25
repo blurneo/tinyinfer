@@ -52,8 +52,8 @@ namespace ti
     // Matrix B: KxN
     // Matrix C: MxN
     // gemm using block and pack b methods
-    void gemm_pp_block4x8_packab_unroll(int M, int K, int N, const float* A,
-                                        const float* B, float* C);
+    void gemm_pp_block4x8_packab_unroll(int M, int K, int N, const float *A,
+                                        const float *B, float *C);
     // Matrix A: MxK
     // Matrix B: KxN
     // Matrix C: MxN

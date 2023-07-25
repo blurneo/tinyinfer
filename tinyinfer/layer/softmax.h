@@ -4,26 +4,29 @@
 #include "tinyinfer/common/base_layer.h"
 #include <cmath>
 
-namespace ti {
+namespace ti
+{
 
-typedef struct SoftmaxLayerParam : public BaseLayerParameter {
-  int axis = -1;
-} SoftmaxLayerParameter;
+  typedef struct SoftmaxLayerParam : public BaseLayerParameter
+  {
+    int axis = -1;
+  } SoftmaxLayerParameter;
 
-class Softmax : public BaseLayer {
-public:
-  Softmax() : BaseLayer(LAYER_SOFTMAX) {}
-  Softmax(SoftmaxLayerParameter &&param)
-      : param_(std::move(param)), BaseLayer(LAYER_SOFTMAX) {}
-  bool forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
-               std::vector<std::shared_ptr<Tensor>> output_tensors) override;
+  class Softmax : public BaseLayer
+  {
+  public:
+    Softmax() : BaseLayer(LAYER_SOFTMAX) {}
+    Softmax(SoftmaxLayerParameter &&param)
+        : param_(std::move(param)), BaseLayer(LAYER_SOFTMAX) {}
+    bool forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
+                 std::vector<std::shared_ptr<Tensor>> output_tensors) override;
 
-private:
-  bool kernel(std::shared_ptr<Tensor> input_tensor,
-              std::shared_ptr<Tensor> output_tensor);
+  private:
+    bool kernel(std::shared_ptr<Tensor> input_tensor,
+                std::shared_ptr<Tensor> output_tensor);
 
-private:
-  SoftmaxLayerParameter param_;
-};
+  private:
+    SoftmaxLayerParameter param_;
+  };
 
 } // namespace ti

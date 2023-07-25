@@ -2,13 +2,16 @@
 #include "tinyinfer/reflection/serializer.h"
 #include "tinyinfer/reflection/deserializer.h"
 
-namespace ti {
+namespace ti
+{
 
-void BaseLayer::serialize(Serializer& serializer) {
-    serialize_internal(serializer);
-}
-bool BaseLayer::deserialize(Deserializer& deserializer) {
-    return deserialize_internal(deserializer);
-}
+    void BaseLayer::serialize(Serializer &serializer)
+    {
+        serialize_internal(serializer);
+    }
+    bool BaseLayer::deserialize(Deserializer &deserializer)
+    {
+        return deserialize_internal(deserializer);
+    }
 
 }

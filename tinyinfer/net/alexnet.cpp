@@ -5,7 +5,8 @@
 #include "tinyinfer/layer/relu.h"
 #include <iostream>
 
-class AlexNet {
+class AlexNet
+{
 public:
 private:
 };

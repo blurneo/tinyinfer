@@ -5,10 +5,12 @@
 #include "tinyinfer/layer/batch_normalization.h"
 #include <cmath>
 
-namespace ti {
+namespace ti
+{
 
-bool BatchNormalization::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
-              std::vector<std::shared_ptr<Tensor>> output_tensors) {
+  bool BatchNormalization::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
+                                   std::vector<std::shared_ptr<Tensor>> output_tensors)
+  {
     CHECK_BOOL_RET(input_tensors.size(), 1,
                    "Maxpool input tensor number should be 1")
     std::shared_ptr<Tensor> input_tensor = input_tensors[0];
@@ -25,10 +27,11 @@ bool BatchNormalization::forward(const std::vector<std::shared_ptr<Tensor>> &inp
                    "BN input tensor dims should be at least 2")
     output_tensor->reshape_like(input_tensor);
     return kernel(input_tensor, output_tensor);
-}
+  }
 
-bool BatchNormalization::kernel(std::shared_ptr<Tensor> input_tensor,
-            std::shared_ptr<Tensor> output_tensor) {
+  bool BatchNormalization::kernel(std::shared_ptr<Tensor> input_tensor,
+                                  std::shared_ptr<Tensor> output_tensor)
+  {
     auto &input_values = input_tensor->get_values();
     auto &output_values = output_tensor->get_values();
     auto input_dims_vec = input_tensor->dims_vector();
@@ -39,8 +42,10 @@ bool BatchNormalization::kernel(std::shared_ptr<Tensor> input_tensor,
     int dim_from_idx = input_dims_vec[axis_idx];
     int idx = 0;
     // Y = (X - input_mean) / sqrt(input_var + epsilon) * scale + B
-    while (idx < output_values.size()) {
-      for (int i = 0; i < dim_from_idx; i++) {
+    while (idx < output_values.size())
+    {
+      for (int i = 0; i < dim_from_idx; i++)
+      {
         int idx = i * stride.value();
         output_values[idx] = (input_values[idx] - param_.mean[i]) /
                                  std::sqrt(param_.var[i] + param_.epsilon) *
@@ -50,6 +55,6 @@ bool BatchNormalization::kernel(std::shared_ptr<Tensor> input_tensor,
     }
 
     return true;
-}
+  }
 
 } // namespace ti

@@ -7,11 +7,14 @@
 #include "tinyinfer/reflection/serializer.h"
 #include "tinyinfer/reflection/deserializer.h"
 
-namespace ti {
+namespace ti
+{
 
-bool Add::is_compatible(const std::shared_ptr<Tensor> &input_tensor,
-                    std::vector<int> &broadcast_shapes) {
-    if (input_tensor->is_alike(param_.weights)) {
+  bool Add::is_compatible(const std::shared_ptr<Tensor> &input_tensor,
+                          std::vector<int> &broadcast_shapes)
+  {
+    if (input_tensor->is_alike(param_.weights))
+    {
       broadcast_shapes = input_tensor->dims_vector();
       return true;
     }
@@ -19,28 +22,38 @@ bool Add::is_compatible(const std::shared_ptr<Tensor> &input_tensor,
     auto output_dims_vec = param_.weights->dims_vector();
     std::vector<int> ret_dims_vec;
     int ret_dims_size = std::max(input_dims_vec.size(), output_dims_vec.size());
-    for (int i = input_dims_vec.size(); i < ret_dims_size; i++) {
+    for (int i = input_dims_vec.size(); i < ret_dims_size; i++)
+    {
       input_dims_vec.insert(input_dims_vec.begin(), 1);
     }
-    for (int i = output_dims_vec.size(); i < ret_dims_size; i++) {
+    for (int i = output_dims_vec.size(); i < ret_dims_size; i++)
+    {
       output_dims_vec.insert(output_dims_vec.begin(), 1);
     }
-    for (int i = 0; i < ret_dims_size; i++) {
-      if (input_dims_vec[i] != output_dims_vec[i]) {
-        if (input_dims_vec[i] == 1 || output_dims_vec[i] == 1) {
+    for (int i = 0; i < ret_dims_size; i++)
+    {
+      if (input_dims_vec[i] != output_dims_vec[i])
+      {
+        if (input_dims_vec[i] == 1 || output_dims_vec[i] == 1)
+        {
           ret_dims_vec.push_back(input_dims_vec[i] * output_dims_vec[i]);
-        } else {
+        }
+        else
+        {
           return false;
         }
-      } else {
+      }
+      else
+      {
         ret_dims_vec.push_back(input_dims_vec[i]);
       }
     }
     broadcast_shapes = ret_dims_vec;
     return true;
   }
-bool Add::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
-              std::vector<std::shared_ptr<Tensor>> output_tensors) {
+  bool Add::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
+                    std::vector<std::shared_ptr<Tensor>> output_tensors)
+  {
     CHECK_BOOL_RET(input_tensors.size(), 1,
                    "Add input tensor number should be 1")
     const std::shared_ptr<Tensor> &input_tensor = input_tensors[0];
@@ -53,13 +66,14 @@ bool Add::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
     // calculate computation and memory infomation
     flops_ = output_tensor->get_count();
     bytes_ = input_tensor->get_bytes() +
-          param_.weights->get_bytes() +
-          output_tensor->get_bytes();
+             param_.weights->get_bytes() +
+             output_tensor->get_bytes();
     return kernel(input_tensor, output_tensor);
-}
+  }
 
-bool Add::kernel(const std::shared_ptr<Tensor> &input_tensor,
-              std::shared_ptr<Tensor> output_tensor) {
+  bool Add::kernel(const std::shared_ptr<Tensor> &input_tensor,
+                   std::shared_ptr<Tensor> output_tensor)
+  {
     int IN_T_N = input_tensor->get_n();
     int IN_T_C = input_tensor->get_c();
     int IN_T_H = input_tensor->get_h();
@@ -86,19 +100,23 @@ bool Add::kernel(const std::shared_ptr<Tensor> &input_tensor,
     // auto output_dims_vec = output_tensor->dims_vector();
     // std::vector<float> &output_vals = output_tensor->get_values();
     for (int out_n = 0, in_n = 0, w_n = 0; out_n < LOOP_OUT_T_N;
-         out_n++, in_n++, w_n++) {
+         out_n++, in_n++, w_n++)
+    {
       in_n = std::max(0, std::min(IN_T_N - 1, in_n));
       w_n = std::max(0, std::min(W_T_N - 1, w_n));
       for (int out_c = 0, in_c = 0, w_c = 0; out_c < LOOP_OUT_T_C;
-           out_c++, in_c++, w_c++) {
+           out_c++, in_c++, w_c++)
+      {
         in_c = std::max(0, std::min(IN_T_C - 1, in_c));
         w_c = std::max(0, std::min(W_T_C - 1, w_c));
         for (int out_h = 0, in_h = 0, w_h = 0; out_h < LOOP_OUT_T_H;
-             out_h++, in_h++, w_h++) {
+             out_h++, in_h++, w_h++)
+        {
           in_h = std::max(0, std::min(IN_T_H - 1, in_h));
           w_h = std::max(0, std::min(W_T_H - 1, w_h));
           for (int out_w = 0, in_w = 0, w_w = 0; out_w < LOOP_OUT_T_W;
-               out_w++, in_w++, w_w++) {
+               out_w++, in_w++, w_w++)
+          {
             in_w = std::max(0, std::min(IN_T_W - 1, in_w));
             w_w = std::max(0, std::min(W_T_W - 1, w_w));
             int in_idx = in_n * IN_T_C * IN_T_H * IN_T_W +
@@ -113,15 +131,17 @@ bool Add::kernel(const std::shared_ptr<Tensor> &input_tensor,
       }
     }
     return true;
-}
+  }
 
-void Add::serialize(Serializer& serializer) {
+  void Add::serialize(Serializer &serializer)
+  {
     BaseLayer::serialize(serializer);
     Add::serialize_internal(serializer);
-}
-bool Add::deserialize(Deserializer& deserializer) {
+  }
+  bool Add::deserialize(Deserializer &deserializer)
+  {
     CHECK_BOOL_RET(BaseLayer::deserialize(deserializer), true, "Add baselayer deserialize failed");
     return Add::deserialize_internal(deserializer);
-}
+  }
 
 } // namespace ti

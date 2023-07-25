@@ -7,10 +7,12 @@
 #include "tinyinfer/reflection/serializer.h"
 #include "tinyinfer/reflection/deserializer.h"
 
-namespace ti {
+namespace ti
+{
 
-bool MaxPool::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
-               std::vector<std::shared_ptr<Tensor>> output_tensors) {
+  bool MaxPool::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
+                        std::vector<std::shared_ptr<Tensor>> output_tensors)
+  {
     CHECK_BOOL_RET(input_tensors.size(), 1,
                    "Maxpool input tensor number should be 1")
     const std::shared_ptr<Tensor> &input_tensor = input_tensors[0];
@@ -31,10 +33,11 @@ bool MaxPool::forward(const std::vector<std::shared_ptr<Tensor>> &input_tensors,
     flops_ = 0;
     bytes_ = input_tensor->get_bytes() + output_tensor->get_bytes();
     return kernel(input_tensor, output_tensor);
-}
+  }
 
-bool MaxPool::kernel(std::shared_ptr<Tensor> input_tensor,
-              std::shared_ptr<Tensor> output_tensor) {
+  bool MaxPool::kernel(std::shared_ptr<Tensor> input_tensor,
+                       std::shared_ptr<Tensor> output_tensor)
+  {
     // param def
     int IN_T_N = input_tensor->get_n();
     int IN_T_C = input_tensor->get_c();
@@ -52,15 +55,20 @@ bool MaxPool::kernel(std::shared_ptr<Tensor> input_tensor,
         pad_d = param_.pad_d;
     // implementation
     // int idx0 = in_n * IN_T_C * IN_T_H * IN_T_W;
-    for (int in_c = 0; in_c < IN_T_C; in_c++) {
+    for (int in_c = 0; in_c < IN_T_C; in_c++)
+    {
       int idx1 = in_c * IN_T_H * IN_T_W;
-      for (int in_h = 0, oh = 0; oh < OUT_T_H; in_h += stride_y, oh++) {
+      for (int in_h = 0, oh = 0; oh < OUT_T_H; in_h += stride_y, oh++)
+      {
         int idx2 = idx1 + in_h * IN_T_W;
-        for (int in_w = 0, ow = 0; ow < OUT_T_W; in_w += stride_x, ow++) {
+        for (int in_w = 0, ow = 0; ow < OUT_T_W; in_w += stride_x, ow++)
+        {
           int idx3 = idx2 + in_w;
           float max = input_vals[idx3];
-          for (int h = 0; h < kshape_y; h++) {
-            for (int w = 0; w < kshape_x; w++) {
+          for (int h = 0; h < kshape_y; h++)
+          {
+            for (int w = 0; w < kshape_x; w++)
+            {
               int t_idx = idx3 + h * IN_T_W + w;
               max = max > input_vals[t_idx] ? max : input_vals[t_idx];
             }
@@ -72,16 +80,18 @@ bool MaxPool::kernel(std::shared_ptr<Tensor> input_tensor,
     }
 
     return true;
-}
+  }
 
-void MaxPool::serialize(Serializer& serializer) {
+  void MaxPool::serialize(Serializer &serializer)
+  {
     BaseLayer::serialize(serializer);
     MaxPool::serialize_internal(serializer);
-}
+  }
 
-bool MaxPool::deserialize(Deserializer& deserializer) {
+  bool MaxPool::deserialize(Deserializer &deserializer)
+  {
     CHECK_BOOL_RET(BaseLayer::deserialize(deserializer), true, "Maxpool baselayer deserialize failed");
     return MaxPool::deserialize_internal(deserializer);
-}
+  }
 
 } // namespace ti

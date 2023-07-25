@@ -1,6 +1,7 @@
 #pragma once
 
-typedef enum LayerType {
+typedef enum LayerType
+{
   LAYER_ADD = 0,
   LAYER_CONVOLUTION = 1,
   LAYER_LRN = 2,
