@@ -17,10 +17,10 @@ namespace tf
         int cols;
         int channels;
         int type;
-        std::shared_ptr<T> data;
+        std::vector<T> data;
         const T *operator[](int row_idx) const
         {
-            return &((data.get())[row_idx * cols * channels]);
+            return &(data[row_idx * cols * channels]);
         }
     };
     struct Size
