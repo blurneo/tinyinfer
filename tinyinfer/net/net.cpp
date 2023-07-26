@@ -44,6 +44,8 @@ namespace ti
     tensors_[input->get_name()] = input;
     std::vector<std::shared_ptr<Tensor>> input_tensors;
     std::vector<std::shared_ptr<Tensor>> output_tensors;
+    net_flops_ = 0;
+    net_mem_bytes_ = 0;
     while (!graph_->is_finished())
     {
       input_tensors.clear();
