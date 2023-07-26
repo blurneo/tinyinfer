@@ -34,3 +34,5 @@ target_link_libraries(mnist_unittest PRIVATE ti)
 
 add_executable(gemm_pp_unittest tests/gemm_pp_unittest.cpp)
 target_link_libraries(gemm_pp_unittest PRIVATE ti)
+
+add_subdirectory(flow)
