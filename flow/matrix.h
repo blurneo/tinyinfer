@@ -10,15 +10,13 @@ namespace tf
     template<int row_size, int col_size>
     struct Matrix
     {
-        int rows;
-        int cols;
         std::vector<float> vals;
         Matrix() { vals.resize(row_size * col_size); }
         const float* operator[](int row) const {
-            return &(vals[row * cols]);
+            return &(vals[row_size * col_size]);
         }
         float* operator[](int row) {
-            return &(vals[row * cols]);
+            return &(vals[row * col_size]);
         }
         // inverse matrix from: https://www.geeksforgeeks.org/adjoint-inverse-matrix/
         // Function to get cofactor of A[p][q] in temp[][]. n is
