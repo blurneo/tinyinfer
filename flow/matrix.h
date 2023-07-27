@@ -20,6 +20,20 @@ namespace tf
         {
             return &(vals[row * col_size]);
         }
+        Vec<row_size> operator*(const Vec<col_size> &vec) const
+        {
+            Vec<row_size> ret;
+            for (int i = 0; i < row_size; i++)
+            {
+                float sum = 0;
+                for (int j = 0; j < col_size; j++)
+                {
+                    sum += this->operator[](i)[j] * vec[j];
+                }
+                ret[i] = sum;
+            }
+            return ret;
+        }
         // inverse matrix from: https://www.geeksforgeeks.org/adjoint-inverse-matrix/
         // Function to get cofactor of A[p][q] in temp[][]. n is
         // current dimension of A[][]

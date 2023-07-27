@@ -1,31 +1,67 @@
 #pragma once
+#include <vector>
 
 namespace tf
 {
-    struct Vec2
+    template <int size>
+    struct Vec
     {
-        float x;
-        float y;
-        Vec2() : x(0), y(0) {}
-        Vec2(float _x, float _y) : x(_x), y(_y) {}
-        Vec2 operator/(float scale) const
+        std::vector<float> vals;
+        Vec() { vals.resize(size); }
+        template <class T>
+        Vec(T v)
         {
-            return Vec2(x / scale, y / scale);
+            vals.push_back(v);
         }
-        Vec2 operator*(float scale) const
+        template <class T, class... T2>
+        Vec(T v, T2... rest)
         {
-            return Vec2(x * scale, y * scale);
+            vals.push_back(v);
+            Vec(rest...);
         }
-        Vec2 operator+(const Vec2 &rhs) const
+        Vec<size> operator/(float scale) const
         {
-            return Vec2(x + rhs.x, y + rhs.y);
+            Vec<size> ret;
+            for (int i = 0; i < vals.size(); i++)
+            {
+                ret.vals[i] = vals[i] / scale;
+            }
+            return ret;
         }
-        Vec2 operator=(const Vec2 &rhs)
+        Vec<size> operator*(float scale) const
         {
-            x = rhs.x;
-            y = rhs.y;
-            return *this;
+            Vec<size> ret;
+            for (int i = 0; i < vals.size(); i++)
+            {
+                ret.vals[i] = vals[i] * scale;
+            }
+            return ret;
+        }
+        Vec<size> operator+(const Vec<size> &rhs) const
+        {
+            Vec<size> ret;
+            for (int i = 0; i < vals.size(); i++)
+            {
+                ret.vals[i] = vals[i] + rhs.vals[i];
+            }
+            return ret;
+        }
+        void operator=(const Vec<size> &rhs)
+        {
+            for (int i = 0; i < vals.size(); i++)
+            {
+                vals[i] = rhs.vals[i];
+            }
+        }
+        float operator[](int idx) const
+        {
+            return vals[idx];
+        }
+        float &operator[](int idx)
+        {
+            return vals[idx];
         }
     };
+    typedef Vec<2> Vec2;
 
 } // namespace tf

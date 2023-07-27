@@ -28,12 +28,12 @@ namespace tf
             return false;
         if (Ix.rows != Iy.rows || Ix.cols != Iy.cols || Ix.channels != Iy.channels)
             return false;
-        int l_bound = input_point.x - window_size.x;
-        int r_bound = input_point.x + window_size.x;
+        int l_bound = input_point.vals[0] - window_size.vals[0];
+        int r_bound = input_point.vals[0] + window_size.vals[0];
         l_bound = l_bound < 0 ? 0 : l_bound;
         r_bound = r_bound >= Ix.cols ? Ix.cols - 1 : r_bound;
-        int d_bound = input_point.y - window_size.y;
-        int u_bound = input_point.y + window_size.y;
+        int d_bound = input_point.vals[1] - window_size.vals[1];
+        int u_bound = input_point.vals[1] + window_size.vals[1];
         u_bound = u_bound < 0 ? 0 : u_bound;
         d_bound = d_bound >= Ix.rows ? Ix.rows - 1 : r_bound;
         for (int x = l_bound; x <= r_bound; x++)
@@ -54,32 +54,32 @@ namespace tf
                        const Vec2 &g_L, Vec2 &v, int K, const Matrix2x2 &G)
     {
         // image mismatch vector
-        int l_bound = input_point.x - window_size.x;
-        int r_bound = input_point.x + window_size.x;
+        int l_bound = input_point.vals[0] - window_size.vals[0];
+        int r_bound = input_point.vals[0] + window_size.vals[0];
         l_bound = l_bound < 0 ? 0 : l_bound;
         r_bound = r_bound >= Ix.cols ? Ix.cols - 1 : r_bound;
-        int d_bound = input_point.y - window_size.y;
-        int u_bound = input_point.y + window_size.y;
+        int d_bound = input_point.vals[1] - window_size.vals[1];
+        int u_bound = input_point.vals[1] + window_size.vals[1];
         u_bound = u_bound < 0 ? 0 : u_bound;
         d_bound = d_bound >= Ix.rows ? Ix.rows - 1 : r_bound;
         for (int k = 1; k <= K; k++)
         {
-            int jx = g_L.x + v.x;
-            int jy = g_L.y + v.y;
+            int jx = g_L.vals[0] + v.vals[0];
+            int jy = g_L.vals[1] + v.vals[1];
             Vec2 bk;
             for (int x = l_bound; x <= r_bound; x++)
             {
                 for (int y = u_bound; y <= d_bound; y++)
                 {
                     auto deltaIk = I_L[y][x] - J_L[y + jy][x + jx];
-                    bk.x = bk.x + deltaIk * Ix[y][x];
-                    bk.y = bk.y + deltaIk * Iy[y][x];
+                    bk.vals[0] = bk.vals[0] + deltaIk * Ix[y][x];
+                    bk.vals[1] = bk.vals[1] + deltaIk * Iy[y][x];
                 }
             }
             Matrix2x2 G_inv;
             bool ret = G.inverse(G_inv);
             CHECK_BOOL_RET(ret, true, "G is not inversable")
-            Vec2 nk; // = G_inv * bk;
+            Vec2 nk = G_inv * bk;
             v = v + nk;
         }
         return true;
