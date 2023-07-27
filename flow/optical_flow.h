@@ -17,6 +17,7 @@ namespace tf
         int cols;
         int channels;
         std::vector<T> data;
+        Image() : rows(0), cols(0), channels(0) {}
         Image(int _rows, int _cols, int _channels) : rows(_rows), cols(_cols), channels(_channels) {}
         void reshape(const Image &in)
         {
