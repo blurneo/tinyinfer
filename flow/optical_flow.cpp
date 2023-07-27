@@ -4,13 +4,20 @@
 #include <cmath>
 #include <string.h>
 #include "flow/optical_flow.h"
+#include "flow/resize/fast_resize.h"
 #include "tinyinfer/common/check_macro.h"
 
 namespace tf
 {
 
     bool
-    resize_image(const Image<uint8_t> &in, float x_scale, float y_scale, Image<uint8_t> &out);
+    resize_image(const Image<uint8_t> &in, float x_scale, float y_scale, Image<uint8_t> &out)
+    {
+        CHECK_BOOL_RET(in.channels == 1, true, "optical flow pyramid requires channel equal 1")
+        out.reshape(in.rows * y_scale, in.cols * x_scale);
+        resize_bilinear_c1(in.data.data(), in.cols, in.rows, in.cols * in.channels, out.data.data(), out.cols, out.rows);
+        return true;
+    }
 
     bool get_image_derivative(const Image<uint8_t> &in, Image<uint8_t> &derivative_x, Image<uint8_t> &derivative_y)
     {

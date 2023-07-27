@@ -1,3 +1,6 @@
 [submodule "third_party/libnpy"]
 	path = third_party/libnpy
 	url = https://github.com/llohse/libnpy.git
+[submodule "flow/third_party/stb"]
+	path = flow/third_party/stb
+	url = https://github.com/nothings/stb.git
