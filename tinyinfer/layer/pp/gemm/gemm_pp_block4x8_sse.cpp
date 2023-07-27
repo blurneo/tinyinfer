@@ -74,19 +74,23 @@ namespace ti
         __m128 _c7 = _mm_load_ps(c + 3 * n + 4);
         for (int i = 0; i < k; i++)
         {
-            __m128 a4 = _mm_load_ps(a0); // a0, a1, a2, a3
+            // __m128 a4 = _mm_load_ps(a0); // a0, a1, a2, a3
 
             __m128 b4_0 = _mm_load_ps(b0);     // b0, b1, b2, b3
             __m128 b4_1 = _mm_load_ps(b0 + 4); // b0, b1, b2, b3
 
-            __m128 alo = _mm_unpacklo_ps(a4, a4); // a0, a0, a1, a1
-            __m128 ahi = _mm_unpackhi_ps(a4, a4); // a2, a2, a3, a3
+            // __m128 alo = _mm_unpacklo_ps(a4, a4); // a0, a0, a1, a1
+            // __m128 ahi = _mm_unpackhi_ps(a4, a4); // a2, a2, a3, a3
 
-            __m128 a0_4 = _mm_unpacklo_ps(alo, alo); // a0, a0, a0, a0
-            __m128 a1_4 = _mm_unpackhi_ps(alo, alo); // a1, a1, a1, a1
-            __m128 a2_4 = _mm_unpacklo_ps(ahi, ahi); // a2, a2, a2, a2
-            __m128 a3_4 = _mm_unpackhi_ps(ahi, ahi); // a3, a3, a3, a3
+            // __m128 a0_4 = _mm_unpacklo_ps(alo, alo); // a0, a0, a0, a0
+            // __m128 a1_4 = _mm_unpackhi_ps(alo, alo); // a1, a1, a1, a1
+            // __m128 a2_4 = _mm_unpacklo_ps(ahi, ahi); // a2, a2, a2, a2
+            // __m128 a3_4 = _mm_unpackhi_ps(ahi, ahi); // a3, a3, a3, a3
 
+            __m128 a0_4 = _mm_load1_ps(a0+0);
+            __m128 a1_4 = _mm_load1_ps(a0+1);
+            __m128 a2_4 = _mm_load1_ps(a0+2);
+            __m128 a3_4 = _mm_load1_ps(a0+3);
             _c0 = _c0 + a0_4 * b4_0;
             _c1 = _c1 + a1_4 * b4_0;
             _c2 = _c2 + a2_4 * b4_0;

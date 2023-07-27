@@ -14,17 +14,17 @@ namespace ti
         __m128 c3 = _mm_setzero_ps();
         for (int i = 0; i < k; i++)
         {
-            __m128 a4 = _mm_load_ps(a0); // a0, a1, a2, a3
+            // __m128 a4 = _mm_load1_ps(a0); // a0, a1, a2, a3
 
             __m128 b4 = _mm_load_ps(b0); // b0, b1, b2, b3
 
-            __m128 alo = _mm_unpacklo_ps(a4, a4); // a0, a0, a1, a1
-            __m128 ahi = _mm_unpackhi_ps(a4, a4); // a2, a2, a3, a3
+            // __m128 alo = _mm_unpacklo_ps(a4, a4); // a0, a0, a1, a1
+            // __m128 ahi = _mm_unpackhi_ps(a4, a4); // a2, a2, a3, a3
 
-            __m128 a0_4 = _mm_unpacklo_ps(alo, alo); // a0, a0, a0, a0
-            __m128 a1_4 = _mm_unpackhi_ps(alo, alo); // a1, a1, a1, a1
-            __m128 a2_4 = _mm_unpacklo_ps(ahi, ahi); // a2, a2, a2, a2
-            __m128 a3_4 = _mm_unpackhi_ps(ahi, ahi); // a3, a3, a3, a3
+            __m128 a0_4 = _mm_load1_ps(a0 + 0); // a0, a0, a0, a0
+            __m128 a1_4 = _mm_load1_ps(a0 + 1); // a1, a1, a1, a1
+            __m128 a2_4 = _mm_load1_ps(a0 + 2); // a2, a2, a2, a2
+            __m128 a3_4 = _mm_load1_ps(a0 + 3); // a3, a3, a3, a3
 
             c0 = c0 + a0_4 * b4;
             c1 = c1 + a1_4 * b4;

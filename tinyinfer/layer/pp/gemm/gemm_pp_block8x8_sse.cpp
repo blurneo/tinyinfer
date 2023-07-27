@@ -84,27 +84,27 @@ namespace ti
         __m128 _c15 = _mm_load_ps(c + 7 * n + 4);
         for (int i = 0; i < k; i++)
         {
-            __m128 a4_0 = _mm_load_ps(a0);     // a0, a1, a2, a3
-            __m128 a4_1 = _mm_load_ps(a0 + 4); // a4, a5, a6, a7
+            // __m128 a4_0 = _mm_load_ps(a0);     // a0, a1, a2, a3
+            // __m128 a4_1 = _mm_load_ps(a0 + 4); // a4, a5, a6, a7
 
             __m128 b4_0 = _mm_load_ps(b0);     // b0, b1, b2, b3
             __m128 b4_1 = _mm_load_ps(b0 + 4); // b4, b5, b6, b7
 
-            __m128 alo = _mm_unpacklo_ps(a4_0, a4_0); // a0, a0, a1, a1
-            __m128 ahi = _mm_unpackhi_ps(a4_0, a4_0); // a2, a2, a3, a3
+            // __m128 alo = _mm_unpacklo_ps(a4_0, a4_0); // a0, a0, a1, a1
+            // __m128 ahi = _mm_unpackhi_ps(a4_0, a4_0); // a2, a2, a3, a3
 
-            __m128 a0_4 = _mm_unpacklo_ps(alo, alo); // a0, a0, a0, a0
-            __m128 a1_4 = _mm_unpackhi_ps(alo, alo); // a1, a1, a1, a1
-            __m128 a2_4 = _mm_unpacklo_ps(ahi, ahi); // a2, a2, a2, a2
-            __m128 a3_4 = _mm_unpackhi_ps(ahi, ahi); // a3, a3, a3, a3
+            __m128 a0_4 = _mm_load1_ps(a0 + 0); // a0, a0, a0, a0
+            __m128 a1_4 = _mm_load1_ps(a0 + 1); // a1, a1, a1, a1
+            __m128 a2_4 = _mm_load1_ps(a0 + 2); // a2, a2, a2, a2
+            __m128 a3_4 = _mm_load1_ps(a0 + 3); // a3, a3, a3, a3
 
-            alo = _mm_unpacklo_ps(a4_1, a4_1); // a4, a4, a5, a5
-            ahi = _mm_unpackhi_ps(a4_1, a4_1); // a6, a6, a7, a7
+            // alo = _mm_unpacklo_ps(a4_1, a4_1); // a4, a4, a5, a5
+            // ahi = _mm_unpackhi_ps(a4_1, a4_1); // a6, a6, a7, a7
 
-            __m128 a4_4 = _mm_unpacklo_ps(alo, alo); // a4, a4, a4, a4
-            __m128 a5_4 = _mm_unpackhi_ps(alo, alo); // a5, a5, a5, a5
-            __m128 a6_4 = _mm_unpacklo_ps(ahi, ahi); // a6, a6, a6, a6
-            __m128 a7_4 = _mm_unpackhi_ps(ahi, ahi); // a7, a7, a7, a7
+            __m128 a4_4 = _mm_load1_ps(a0 + 4); // a4, a4, a4, a4
+            __m128 a5_4 = _mm_load1_ps(a0 + 5); // a5, a5, a5, a5
+            __m128 a6_4 = _mm_load1_ps(a0 + 6); // a6, a6, a6, a6
+            __m128 a7_4 = _mm_load1_ps(a0 + 7); // a7, a7, a7, a7
 
             _c0 = _c0 + a0_4 * b4_0;
             _c1 = _c1 + a1_4 * b4_0;
