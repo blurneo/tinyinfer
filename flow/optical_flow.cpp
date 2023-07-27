@@ -8,7 +8,7 @@
 
 namespace tf
 {
-    
+
     bool
     resize_image(const Image<uint8_t> &in, float x_scale, float y_scale, Image<uint8_t> &out);
 
@@ -79,7 +79,7 @@ namespace tf
             Matrix2x2 G_inv;
             bool ret = G.inverse(G_inv);
             CHECK_BOOL_RET(ret, true, "G is not inversable")
-            Vec2 nk;// = G_inv * bk;
+            Vec2 nk; // = G_inv * bk;
             v = v + nk;
         }
         return true;

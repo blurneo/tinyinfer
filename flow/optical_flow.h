@@ -28,9 +28,9 @@ namespace tf
         int width;
         int rows;
     };
-    
+
     bool resize_image(const Image<uint8_t> &in,
-            float x_scale, float y_scale, Image<uint8_t> &out);
+                      float x_scale, float y_scale, Image<uint8_t> &out);
 
     bool get_image_derivative_x(const Image<uint8_t> &in, Image<uint8_t> &out);
     bool get_image_derivative_y(const Image<uint8_t> &in, Image<uint8_t> &out);
