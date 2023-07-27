@@ -12,12 +12,31 @@ namespace tf
     bool
     resize_image(const Image<uint8_t> &in, float x_scale, float y_scale, Image<uint8_t> &out);
 
-    bool get_image_derivative_x(const Image<uint8_t> &in, Image<uint8_t> &out)
+    bool get_image_derivative(const Image<uint8_t> &in, Image<uint8_t> &derivative_x, Image<uint8_t> &derivative_y)
     {
-        return true;
-    }
-    bool get_image_derivative_y(const Image<uint8_t> &in, Image<uint8_t> &out)
-    {
+        derivative_x.reshape(in);
+        derivative_y.reshape(in);
+        int l_bound = 0;
+        int r_bound = in.cols - 1;
+        int u_bound = 0;
+        int d_bound = in.rows - 1;
+        for (int i = u_bound; i <= d_bound; i++)
+        {
+            int y0 = i - 1;
+            y0 = y0 < u_bound ? u_bound : y0;
+            int y1 = i + 1;
+            y1 = y1 > d_bound ? d_bound : y1;
+#pragma unroll
+            for (int j = l_bound; j <= r_bound; j++)
+            {
+                int x0 = j - 1;
+                x0 = x0 < l_bound ? l_bound : x0;
+                int x1 = j + 1;
+                x1 = x1 > r_bound ? r_bound : x1;
+                derivative_x[i][j] = in[i][x1] - in[i][x0];
+                derivative_y[i][j] = in[y1][j] - in[y0][j];
+            }
+        }
         return true;
     }
 
@@ -114,8 +133,7 @@ namespace tf
             ret = resize_image(from, xscale, yscale, I_L[level]);
             ret = resize_image(to, xscale, yscale, J_L[level]);
 
-            get_image_derivative_x(I_L[level], Ixs[level]);
-            get_image_derivative_y(I_L[level], Iys[level]);
+            get_image_derivative(I_L[level], Ixs[level], Iys[level]);
             xscale *= 0.5;
             yscale *= 0.5;
         }

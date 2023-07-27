@@ -16,9 +16,20 @@ namespace tf
         int rows;
         int cols;
         int channels;
-        int type;
         std::vector<T> data;
+        Image(int _rows, int _cols, int _channels) : rows(_rows), cols(_cols), channels(_channels) {}
+        void reshape(const Image &in)
+        {
+            data.resize(in.data.size());
+            rows = in.rows;
+            cols = in.cols;
+            channels = in.channels;
+        }
         const T *operator[](int row_idx) const
+        {
+            return &(data[row_idx * cols * channels]);
+        }
+        T *operator[](int row_idx)
         {
             return &(data[row_idx * cols * channels]);
         }
@@ -32,8 +43,7 @@ namespace tf
     bool resize_image(const Image<uint8_t> &in,
                       float x_scale, float y_scale, Image<uint8_t> &out);
 
-    bool get_image_derivative_x(const Image<uint8_t> &in, Image<uint8_t> &out);
-    bool get_image_derivative_y(const Image<uint8_t> &in, Image<uint8_t> &out);
+    bool get_image_derivative(const Image<uint8_t> &in, Image<uint8_t> &derivative_x, Image<uint8_t> &derivative_y);
 
     bool calc_spatial_gradient_matrix(const Image<uint8_t> &Ix, const Image<uint8_t> &Iy,
                                       const Vec2 &input_point, Vec2 window_size, Matrix2x2 &G);
