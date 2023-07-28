@@ -64,8 +64,8 @@ namespace ti
             _c7 = _c7 + a3_8 * b1_8;
 
             a0 += 4;
-            b0 += 8;
-            b1 += 8;
+            b0 += 16;
+            b1 += 16;
         }
 
         _mm256_storeu_ps(c, _c0);
