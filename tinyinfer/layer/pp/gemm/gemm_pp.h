@@ -13,6 +13,7 @@ namespace ti
     void block4_pack_b(int K, int N, const float *b, float *packed_b);
     void block8_pack_a(int M, int K, const float *b, float *packed_a);
     void block8_pack_b(int K, int N, const float *b, float *packed_b);
+    void block_nr_pack_b(int K, int N, int Nr, const float *b, float *packed_b);
 
     void mul_add_4x4(int m, int k, int n, const float *a, const float *b, float *c);
     void mul_add_4x4_packedb(int m, int k, int n, const float *a, const float *b, float *c);
@@ -62,5 +63,7 @@ namespace ti
                                         const std::vector<float> &B, std::vector<float> &C);
 
     void gemm_pp_block4x16_packab_unroll(int M, int K, int N, const float *A,
+                                         const float *B, float *C);
+    void gemm_pp_block4x16_nr_packab_unroll(int M, int K, int N, const float *A,
                                          const float *B, float *C);
 }
