@@ -61,4 +61,6 @@ namespace ti
     void gemm_pp_block8x8_packab_unroll(int M, int K, int N, const std::vector<float> &A,
                                         const std::vector<float> &B, std::vector<float> &C);
 
+    void gemm_pp_block4x16_packab_unroll(int M, int K, int N, const float *A,
+                                         const float *B, float *C);
 }

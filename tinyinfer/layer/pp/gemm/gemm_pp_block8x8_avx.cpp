@@ -58,95 +58,57 @@ namespace ti
         }
     }
 
-    void mul_add_8x8_packedab_simd(int m, int k, int n, const float *a, const float *b, float *c)
+    void mul_add_8x8_packedab_avx(int m, int k, int n, const float *a, const float *b, float *c)
     {
         const float *a0 = a;
         const float *b0 = b;
 
-        __m128 _c0 = _mm_load_ps(c);
-        __m128 _c1 = _mm_load_ps(c + n);
-        __m128 _c2 = _mm_load_ps(c + 2 * n);
-        __m128 _c3 = _mm_load_ps(c + 3 * n);
+        __m256 _c0 = _mm256_loadu_ps(c);
+        __m256 _c1 = _mm256_loadu_ps(c + n);
+        __m256 _c2 = _mm256_loadu_ps(c + 2 * n);
+        __m256 _c3 = _mm256_loadu_ps(c + 3 * n);
 
-        __m128 _c4 = _mm_load_ps(c + 4);
-        __m128 _c5 = _mm_load_ps(c + n + 4);
-        __m128 _c6 = _mm_load_ps(c + 2 * n + 4);
-        __m128 _c7 = _mm_load_ps(c + 3 * n + 4);
+        __m256 _c4 = _mm256_loadu_ps(c + 4 * n);
+        __m256 _c5 = _mm256_loadu_ps(c + 5 * n);
+        __m256 _c6 = _mm256_loadu_ps(c + 6 * n);
+        __m256 _c7 = _mm256_loadu_ps(c + 7 * n);
 
-        __m128 _c8 = _mm_load_ps(c + 4 * n);
-        __m128 _c9 = _mm_load_ps(c + 5 * n);
-        __m128 _c10 = _mm_load_ps(c + 6 * n);
-        __m128 _c11 = _mm_load_ps(c + 7 * n);
-
-        __m128 _c12 = _mm_load_ps(c + 4 * n + 4);
-        __m128 _c13 = _mm_load_ps(c + 5 * n + 4);
-        __m128 _c14 = _mm_load_ps(c + 6 * n + 4);
-        __m128 _c15 = _mm_load_ps(c + 7 * n + 4);
         for (int i = 0; i < k; i++)
         {
-            // __m128 a4_0 = _mm_load_ps(a0);     // a0, a1, a2, a3
-            // __m128 a4_1 = _mm_load_ps(a0 + 4); // a4, a5, a6, a7
+            __m256 b8 = _mm256_loadu_ps(b0);
 
-            __m128 b4_0 = _mm_load_ps(b0);     // b0, b1, b2, b3
-            __m128 b4_1 = _mm_load_ps(b0 + 4); // b4, b5, b6, b7
+            __m256 a0_8 = _mm256_broadcast_ss(a0 + 0); // a0, a0, a0, a0
+            __m256 a1_8 = _mm256_broadcast_ss(a0 + 1); // a1, a1, a1, a1
+            __m256 a2_8 = _mm256_broadcast_ss(a0 + 2); // a2, a2, a2, a2
+            __m256 a3_8 = _mm256_broadcast_ss(a0 + 3); // a3, a3, a3, a3
 
-            // __m128 alo = _mm_unpacklo_ps(a4_0, a4_0); // a0, a0, a1, a1
-            // __m128 ahi = _mm_unpackhi_ps(a4_0, a4_0); // a2, a2, a3, a3
+            __m256 a4_8 = _mm256_broadcast_ss(a0 + 4); // a4, a4, a4, a4
+            __m256 a5_8 = _mm256_broadcast_ss(a0 + 5); // a5, a5, a5, a5
+            __m256 a6_8 = _mm256_broadcast_ss(a0 + 6); // a6, a6, a6, a6
+            __m256 a7_8 = _mm256_broadcast_ss(a0 + 7); // a7, a7, a7, a7
 
-            __m128 a0_4 = _mm_load1_ps(a0 + 0); // a0, a0, a0, a0
-            __m128 a1_4 = _mm_load1_ps(a0 + 1); // a1, a1, a1, a1
-            __m128 a2_4 = _mm_load1_ps(a0 + 2); // a2, a2, a2, a2
-            __m128 a3_4 = _mm_load1_ps(a0 + 3); // a3, a3, a3, a3
-
-            // alo = _mm_unpacklo_ps(a4_1, a4_1); // a4, a4, a5, a5
-            // ahi = _mm_unpackhi_ps(a4_1, a4_1); // a6, a6, a7, a7
-
-            __m128 a4_4 = _mm_load1_ps(a0 + 4); // a4, a4, a4, a4
-            __m128 a5_4 = _mm_load1_ps(a0 + 5); // a5, a5, a5, a5
-            __m128 a6_4 = _mm_load1_ps(a0 + 6); // a6, a6, a6, a6
-            __m128 a7_4 = _mm_load1_ps(a0 + 7); // a7, a7, a7, a7
-
-            _c0 = _c0 + a0_4 * b4_0;
-            _c1 = _c1 + a1_4 * b4_0;
-            _c2 = _c2 + a2_4 * b4_0;
-            _c3 = _c3 + a3_4 * b4_0;
-            _c4 = _c4 + a0_4 * b4_1;
-            _c5 = _c5 + a1_4 * b4_1;
-            _c6 = _c6 + a2_4 * b4_1;
-            _c7 = _c7 + a3_4 * b4_1;
-
-            _c8 = _c8 + a4_4 * b4_0;
-            _c9 = _c9 + a5_4 * b4_0;
-            _c10 = _c10 + a6_4 * b4_0;
-            _c11 = _c11 + a7_4 * b4_0;
-            _c12 = _c12 + a4_4 * b4_1;
-            _c13 = _c13 + a5_4 * b4_1;
-            _c14 = _c14 + a6_4 * b4_1;
-            _c15 = _c15 + a7_4 * b4_1;
+            _c0 = _c0 + a0_8 * b8;
+            _c1 = _c1 + a1_8 * b8;
+            _c2 = _c2 + a2_8 * b8;
+            _c3 = _c3 + a3_8 * b8;
+            _c4 = _c4 + a4_8 * b8;
+            _c5 = _c5 + a5_8 * b8;
+            _c6 = _c6 + a6_8 * b8;
+            _c7 = _c7 + a7_8 * b8;
 
             a0 += 8;
             b0 += 8;
         }
 
-        _mm_store_ps(c, _c0);
-        _mm_store_ps(c + n, _c1);
-        _mm_store_ps(c + 2 * n, _c2);
-        _mm_store_ps(c + 3 * n, _c3);
+        _mm256_storeu_ps(c, _c0);
+        _mm256_storeu_ps(c + n, _c1);
+        _mm256_storeu_ps(c + 2 * n, _c2);
+        _mm256_storeu_ps(c + 3 * n, _c3);
 
-        _mm_store_ps(c + 4, _c4);
-        _mm_store_ps(c + n + 4, _c5);
-        _mm_store_ps(c + 2 * n + 4, _c6);
-        _mm_store_ps(c + 3 * n + 4, _c7);
-
-        _mm_store_ps(c + 4 * n, _c8);
-        _mm_store_ps(c + 5 * n, _c9);
-        _mm_store_ps(c + 6 * n, _c10);
-        _mm_store_ps(c + 7 * n, _c11);
-
-        _mm_store_ps(c + 4 * n + 4, _c12);
-        _mm_store_ps(c + 5 * n + 4, _c13);
-        _mm_store_ps(c + 6 * n + 4, _c14);
-        _mm_store_ps(c + 7 * n + 4, _c15);
+        _mm256_storeu_ps(c + 4 * n, _c4);
+        _mm256_storeu_ps(c + 5 * n, _c5);
+        _mm256_storeu_ps(c + 6 * n, _c6);
+        _mm256_storeu_ps(c + 7 * n, _c7);
     }
 
     // Matrix A: MxK
@@ -176,7 +138,7 @@ namespace ti
             for (; b_block_idx < BLOCK_NUM_B; b_block_idx++)
             {
                 int b_start_col = b_block_idx * BLOCK_SIZE_B;
-                mul_add_8x8_packedab_simd(M, K, N, packeda + a_start_row * K, packedb + b_start_col * K, C.data() + a_start_row * N + b_start_col);
+                mul_add_8x8_packedab_avx(M, K, N, packeda + a_start_row * K, packedb + b_start_col * K, C.data() + a_start_row * N + b_start_col);
             }
             // process the col residuals
             int b_col = b_block_idx * BLOCK_SIZE_B;

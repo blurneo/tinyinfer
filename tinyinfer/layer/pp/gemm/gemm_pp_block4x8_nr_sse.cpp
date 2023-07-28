@@ -6,6 +6,27 @@
 namespace ti
 {
 
+    void block_nr_pack_b(int K, int N, int Nr, const float *b, float *packed_b)
+    {
+        int loop_N = N / Nr * Nr;
+        int loop_K = K;
+        float *packed0 = packed_b;
+        for (int n = 0; n < loop_N; n += Nr)
+        {
+            const float *b0_p = b + n;
+            for (int k = 0; k < loop_K; k++)
+            {
+#pragma unroll
+                for (int i = 0; i < Nr; i++)
+                {
+                    packed0[i] = b0_p[i];
+                }
+                b0_p += N;
+                packed0 += Nr;
+            }
+        }
+    }
+
     void block8_pack_b(int K, int N, const float *b, float *packed_b)
     {
         int loop_N = N / 8 * 8;
@@ -58,7 +79,7 @@ namespace ti
         }
     }
 
-    void mul_add_4x8_packedab_sse(int m, int k, int n, const float *a, const float *b, float *c)
+    void mul_add_4x8_packedab_sse(int m, int k, int n, int nr, const float *a, const float *b, float *c)
     {
         const float *a0 = a;
         const float *b0 = b;
@@ -101,7 +122,7 @@ namespace ti
             _c7 = _c7 + a3_4 * b4_1;
 
             a0 += 4;
-            b0 += 8;
+            b0 += nr;
         }
 
         _mm_store_ps(c, _c0);
@@ -126,26 +147,35 @@ namespace ti
         // C.resize(OUT_COUNT, 0);
         int BLOCK_SIZE_A = 4;
         int BLOCK_SIZE_B = 8;
+        int BLOCK_SIZE_Nr = 16;
         int BLOCK_NUM_A = M / BLOCK_SIZE_A;
-        int BLOCK_NUM_B = N / BLOCK_SIZE_B;
+        int BLOCK_NUM_B = BLOCK_SIZE_Nr / BLOCK_SIZE_B;
+        int BLOCK_NUM_NR = N / BLOCK_SIZE_Nr;
+        // int BLOCK_NUM_Nr = BLOCK_SIZE_Nr / BLOCK_NUM_B;
         float *packeda = (float *)malloc(M * K * sizeof(float)); // packed into K*N/4 row 4 col
         float *packedb = (float *)malloc(K * N * sizeof(float)); // packed into K*N/4 row 4 col
         // pack b only once, only pack into block times shape, residuals no need to pack
         block4_pack_a(M, K, A, packeda);
-        block8_pack_b(K, N, B, packedb);
+        block_nr_pack_b(K, N, BLOCK_SIZE_Nr, B, packedb);
         // divide all rows into multiple slices
         for (int a_block_idx = 0; a_block_idx < BLOCK_NUM_A; a_block_idx++)
         {
             int a_start_row = a_block_idx * BLOCK_SIZE_A;
-            // iterate through each col
-            int b_block_idx = 0;
-            for (; b_block_idx < BLOCK_NUM_B; b_block_idx++)
+            int nr_block_idx = 0;
+            for (; nr_block_idx < BLOCK_NUM_NR; nr_block_idx++)
             {
-                int b_start_col = b_block_idx * BLOCK_SIZE_B;
-                mul_add_4x8_packedab_sse(M, K, N, packeda + a_start_row * K, packedb + b_start_col * K, C + a_start_row * N + b_start_col);
+                // iterate through each col
+                int b_start_col = nr_block_idx * BLOCK_SIZE_Nr;
+                for (int b_block_idx = 0; b_block_idx < BLOCK_NUM_B; b_block_idx++)
+                {
+                    int small_block_col = b_block_idx * BLOCK_SIZE_B;
+                    mul_add_4x8_packedab_sse(M, K, N, BLOCK_SIZE_Nr, packeda + a_start_row * K,
+                                             packedb + b_start_col * K + small_block_col,
+                                             C + a_start_row * N + b_start_col + small_block_col);
+                }
             }
             // process the col residuals
-            int b_col = b_block_idx * BLOCK_SIZE_B;
+            int b_col = nr_block_idx * BLOCK_SIZE_Nr;
             for (; b_col < N; b_col++)
             {
                 for (int k = 0; k < K; k++)

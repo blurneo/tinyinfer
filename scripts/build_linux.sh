@@ -27,7 +27,7 @@ if [ -z ${TI_BUILD_TYPE+x} ]; then
 fi
 
 if [ -z ${TI_ENABLE_SANITIZER+x} ]; then
-    TI_ENABLE_SANITIZER=ON
+    TI_ENABLE_SANITIZER=OFF
 fi
 
 if [ -z ${TI_Install_PREFIX+x} ]; then
