@@ -95,6 +95,7 @@ int main()
     CHECK_VEC_EQUAL_RET(C0, C4, -1, "C0 C4 not equal");
     CHECK_VEC_EQUAL_RET(C0, C5, -1, "C0 C5 not equal");
     CHECK_VEC_EQUAL_RET(C0, C6, -1, "C0 C6 not equal");
+    CHECK_VEC_EQUAL_RET(C0, C7, -1, "C0 C7 not equal");
 
     return 0;
 }
