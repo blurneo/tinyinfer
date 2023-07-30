@@ -4,7 +4,7 @@
 
 ## Features
 
-- Optimized gemm for convolution using im2col method(faster than openblas).
+- Optimized gemm for convolution using im2col method(faster than numpy/openblas).
     - Reach 80% of the peak computation force on intel i7.
 - Implementation of 20+ deep learning networkd layers.
     - Supports Mobilenet/Resnet and all kinds of common neural networks
