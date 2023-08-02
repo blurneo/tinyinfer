@@ -11,3 +11,4 @@
 - Model serialization and deserialization using C++ reflection.
     - Efficient model parse and generation in .ti format
 - Optimized optical flow implementation.
+- JIT(Just-In-Time) compilation for the performance primitives(coming soon)
