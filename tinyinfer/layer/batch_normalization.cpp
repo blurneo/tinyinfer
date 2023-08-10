@@ -40,17 +40,18 @@ namespace ti
     CHECK_BOOL_RET(stride.has_value(), true,
                    "BatchNormalization calculate stride failed\n");
     int dim_from_idx = input_dims_vec[axis_idx];
-    int idx = 0;
     // Y = (X - input_mean) / sqrt(input_var + epsilon) * scale + B
-    while (idx < output_values.size())
-    {
-      for (int i = 0; i < dim_from_idx; i++)
-      {
-        int idx = i * stride.value();
-        output_values[idx] = (input_values[idx] - param_.mean[i]) /
-                                 std::sqrt(param_.var[i] + param_.epsilon) *
-                                 param_.scale[i] +
-                             param_.b[i];
+    for (int batch_idx = 0; batch_idx < input_tensor->get_n(); batch_idx++) {
+      int cur_batch_start = batch_idx * input_tensor->get_c();
+      for (int c_idx = 0; c_idx < input_tensor->get_c(); c_idx++) {
+        int cur_c_start = cur_batch_start + c_idx * stride.value();
+        for (int val_idx = 0; val_idx < stride; val_idx++) {
+          int cur_idx = cur_c_start + val_idx;
+          output_values[cur_idx] = (input_values[cur_idx] - param_.mean[c_idx]) /
+                                  std::sqrt(param_.var[c_idx] + param_.epsilon) *
+                                  param_.scale[c_idx] +
+                              param_.b[c_idx];
+        }
       }
     }
 
